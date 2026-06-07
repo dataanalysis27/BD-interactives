@@ -1,0 +1,741 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0f;font-family:'Comic Neue',cursive;color:#eee;padding:1.2rem;}
+.logo{font-family:'Bangers',cursive;font-size:2.4rem;letter-spacing:3px;color:#fff;text-shadow:4px 4px 0 #0077CC,7px 7px 0 #003366;line-height:1;text-align:center;}
+.sub{font-size:0.75rem;color:#7BC8F5;letter-spacing:3px;margin-top:4px;text-align:center;}
+.brow{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+.bdg{background:#003366;color:#7BC8F5;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #0077CC;}
+.tabs{display:flex;border-bottom:2px solid #0077CC;margin:1rem 0;}
+.tab{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:8px 18px;background:transparent;color:#888;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.tab.on{color:#fff;border-bottom:3px solid #7BC8F5;}
+.panel{display:none;}.panel.on{display:block;}
+.grid{display:grid;gap:3px;background:#000;border:3px solid #222;border-radius:4px;overflow:hidden;margin-bottom:3px;}
+.g2{grid-template-columns:1fr 1fr;}.g1{grid-template-columns:1fr;}
+.cell{background:#fff;position:relative;overflow:hidden;}
+.cell svg{display:block;width:100%;height:100%;position:absolute;inset:0;}
+.pnum{position:absolute;top:5px;left:5px;width:20px;height:20px;background:#0077CC;color:#fff;border-radius:50%;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:30;border:2px solid #fff;}
+.bub{position:absolute;z-index:20;}
+.bi{background:#fff;border:2px solid #111;border-radius:14px;padding:6px 10px;font-family:'Comic Neue',cursive;font-size:0.72rem;font-weight:700;color:#111;line-height:1.4;max-width:160px;text-align:center;}
+.bi.blue{background:#E3F2FF;border-color:#0077CC;color:#003366;}
+.bi.shout{background:#fff3cd;border-color:#c0392b;border-width:2.5px;color:#7B241C;}
+.bi.happy{background:#E1F5EE;border-color:#1D9E75;color:#085041;}
+.bi.sad{background:#FAECE7;border-color:#993C1D;color:#4A1B0C;}
+.bi.robot{background:#0d1a3e;border-color:#4fc3f7;color:#4fc3f7;}
+.bt{width:0;height:0;}
+.bt.dl{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #111;margin-left:18px;}
+.bt.dr{border-left:4px solid transparent;border-right:8px solid transparent;border-top:10px solid #111;margin-left:auto;margin-right:18px;}
+.bt.dl-b{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #0077CC;margin-left:18px;}
+.bt.dl-h{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #1D9E75;margin-left:18px;}
+.cap{position:absolute;bottom:0;left:0;right:0;background:#003366;color:#7BC8F5;font-family:'Comic Neue',cursive;font-size:0.68rem;font-weight:700;padding:4px 8px;border-top:2px solid #0077CC;font-style:italic;}
+.cap.dark{background:#0a0a2e;color:#4fc3f7;border-top-color:#4fc3f7;}
+.cap.green{background:#085041;color:#9FE1CB;border-top-color:#1D9E75;}
+.cap.top{top:0;bottom:auto;border-top:none;border-bottom:2px solid #0077CC;}
+.sfx{position:absolute;font-family:'Bangers',cursive;z-index:15;pointer-events:none;}
+.qcard{background:#111;border:1.5px solid #0077CC;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.qcard.ok{border-color:#1D9E75;background:#04342C22;}
+.qcard.ko{border-color:#993C1D;background:#4A1B0C22;}
+.qtxt{font-size:0.88rem;font-weight:700;color:#eee;margin-bottom:0.7rem;display:flex;align-items:flex-start;gap:8px;}
+.qn{display:inline-flex;align-items:center;justify-content:center;background:#0077CC;color:#fff;border-radius:50%;width:24px;height:24px;font-size:0.75rem;font-weight:700;flex-shrink:0;}
+.qn.green{background:#1D9E75;}
+.opts{display:flex;flex-direction:column;gap:5px;}
+.opt{font-family:'Comic Neue',cursive;font-size:0.82rem;font-weight:700;text-align:left;padding:7px 12px;border-radius:7px;border:1.5px solid #0077CC;background:#0a0a2e;color:#ddd;cursor:pointer;transition:all .12s;}
+.opt:hover:not(:disabled){background:#003366;border-color:#7BC8F5;}
+.opt.right{background:#04342C;border-color:#1D9E75;color:#9FE1CB;}
+.opt.wrong{background:#4A1B0C;border-color:#993C1D;color:#F5C4B3;}
+.opt.showok{background:#085041;border-color:#1D9E75;color:#9FE1CB;opacity:.7;}
+.fb{font-size:0.78rem;font-weight:700;padding:5px 8px;border-radius:5px;margin-top:6px;display:none;}
+.fb.ok{background:#085041;color:#9FE1CB;display:block;}
+.fb.ko{background:#712B13;color:#F5C4B3;display:block;}
+.openq{background:#111;border:1.5px solid #0077CC;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.openq textarea{width:100%;min-height:65px;background:#0a0a0f;border:1.5px solid #0077CC;border-radius:6px;padding:8px;font-family:'Comic Neue',cursive;font-size:0.82rem;color:#eee;resize:vertical;margin-top:6px;}
+.hint{display:inline-block;background:#003366;color:#7BC8F5;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:8px;margin:2px;}
+.scorebox{background:#111;border:2px solid #0077CC;border-radius:10px;padding:1rem;text-align:center;margin-bottom:1rem;display:none;}
+.scorebox.on{display:block;}
+.scorenum{font-family:'Bangers',cursive;font-size:2.8rem;color:#0077CC;letter-spacing:2px;}
+.actbtn{font-family:'Bangers',cursive;letter-spacing:1px;font-size:1rem;padding:9px 22px;border-radius:20px;background:#0077CC;color:#fff;border:none;cursor:pointer;margin-top:0.5rem;transition:transform .1s;}
+.actbtn:hover{transform:scale(1.04);}
+.actbtn.green{background:#1D9E75;margin-left:8px;}
+.resetbtn{font-family:'Comic Neue',cursive;font-size:0.82rem;padding:7px 18px;border-radius:20px;background:transparent;color:#0077CC;border:2px solid #0077CC;cursor:pointer;margin-left:8px;}
+.vc{background:#111;border:1.5px solid #0077CC;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.vt{font-family:'Bangers',cursive;font-size:1.2rem;color:#7BC8F5;letter-spacing:1px;margin-bottom:0.6rem;}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;}
+.vi{display:flex;gap:6px;font-size:0.8rem;padding:4px 0;border-bottom:1px solid #003366;align-items:baseline;}
+.vde{font-weight:700;color:#7BC8F5;min-width:110px;}
+.vfr{color:#666;}
+</style>
+
+<div class="logo">KEIN SIGNAL!</div>
+<div class="sub">eine manga-story &#252;ber soziale medien</div>
+<div class="brow">
+  <span class="bdg">A1&#8211;A2</span><span class="bdg">10VP &#183; Vaud</span><span class="bdg">Style r&#233;aliste</span>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="tab('bd')">manga lesen</button>
+  <button class="tab" onclick="tab('vocab')">vokabeln</button>
+  <button class="tab" onclick="tab('quiz')">quiz</button>
+</div>
+
+<div id="tab-bd" class="panel on">
+
+<!-- ROW 1 -->
+<div class="grid g2">
+<div class="cell" style="min-height:280px;background:#12121f;">
+  <div class="pnum">1</div>
+  <div class="cap top">Samstag, 23:00 Uhr. Max scrollt seit 6 Stunden.</div>
+  <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="280" fill="#12121f"/>
+    <rect width="320" height="200" fill="#1a1a2e"/>
+    <rect x="200" y="20" width="100" height="70" fill="#0d1a3e" rx="4" stroke="#2a3a5e" stroke-width="1.5"/>
+    <rect x="204" y="24" width="44" height="62" fill="#0a1020"/><rect x="252" y="24" width="44" height="62" fill="#0a1020"/>
+    <rect x="210" y="55" width="4" height="6" fill="#FFD700" opacity=".6"/><rect x="220" y="45" width="3" height="5" fill="#FFD700" opacity=".4"/>
+    <rect x="258" y="50" width="4" height="7" fill="#FFD700" opacity=".5"/><rect x="270" y="40" width="3" height="5" fill="#fff" opacity=".3"/>
+    <rect x="0" y="200" width="320" height="16" fill="#2a1a0a" rx="2"/><rect x="0" y="216" width="320" height="64" fill="#1f1208"/>
+    <ellipse cx="170" cy="195" rx="60" ry="30" fill="#4fc3f7" opacity=".04"/>
+    <rect x="80" y="185" width="90" height="55" fill="#1e3a5f" rx="6"/>
+    <path d="M 125 185 L 115 210 L 135 210 Z" fill="#16304f"/><rect x="120" y="210" width="10" height="20" fill="#16304f" rx="2"/>
+    <rect x="115" y="165" width="20" height="22" fill="#d4956a" rx="4"/>
+    <ellipse cx="125" cy="143" rx="32" ry="36" fill="#d4956a"/>
+    <path d="M 95 150 Q 93 168 108 178 Q 125 185 142 178 Q 157 168 155 150" fill="#d4956a"/>
+    <ellipse cx="94" cy="148" rx="7" ry="9" fill="#c8845a"/><ellipse cx="96" cy="148" rx="4" ry="6" fill="#d4956a"/>
+    <path d="M 93 120 Q 90 100 105 92 Q 125 84 148 92 Q 162 100 158 118 Q 155 108 148 105 Q 135 100 118 102 Q 104 106 98 118 Z" fill="#2a1a08"/>
+    <path d="M 93 120 Q 88 130 90 140 Q 93 148 95 145 Q 94 135 96 125 Z" fill="#231508"/>
+    <path d="M 158 118 Q 162 130 158 142 Q 155 138 156 128 Z" fill="#2a1a08"/>
+    <ellipse cx="112" cy="143" rx="9" ry="7" fill="#f0ece4"/><ellipse cx="138" cy="143" rx="9" ry="7" fill="#f0ece4"/>
+    <circle cx="113" cy="143" r="5.5" fill="#5a3a18"/><circle cx="139" cy="143" r="5.5" fill="#5a3a18"/>
+    <circle cx="113" cy="143" r="3.5" fill="#2a1a08"/><circle cx="139" cy="143" r="3.5" fill="#2a1a08"/>
+    <circle cx="115" cy="141" r="1.8" fill="#4fc3f7" opacity=".7"/><circle cx="141" cy="141" r="1.8" fill="#4fc3f7" opacity=".7"/>
+    <path d="M 103 139 Q 112 136 121 139" stroke="#2a1a08" stroke-width="1.5" fill="none"/>
+    <path d="M 129 139 Q 138 136 147 139" stroke="#2a1a08" stroke-width="1.5" fill="none"/>
+    <path d="M 122 148 Q 120 158 116 162 Q 122 165 128 165 Q 134 162 130 158 Q 128 148 126 148 Z" fill="#c8845a" opacity=".5"/>
+    <path d="M 113 172 Q 125 175 137 172" stroke="#9a5530" stroke-width="1.5" fill="none"/>
+    <rect x="155" y="148" width="55" height="95" fill="#1a1a1a" rx="8" stroke="#333" stroke-width="1.5"/>
+    <rect x="158" y="160" width="49" height="76" fill="#0d1a3e" rx="3"/>
+    <rect x="160" y="163" width="45" height="8" fill="#1a2a4e" rx="2"/>
+    <rect x="162" y="165" width="8" height="5" fill="#E74C3C" rx="1"/>
+    <rect x="160" y="173" width="45" height="22" fill="#162030" rx="1"/>
+    <text x="162" y="208" font-family="sans-serif" font-size="7" fill="#E74C3C">&#10084; 4.291</text>
+    <path d="M 162 185 Q 155 200 155 215 Q 155 230 160 240" stroke="#d4956a" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <rect x="80" y="258" width="55" height="12" fill="#0077CC" rx="3"/>
+    <text x="107" y="267" text-anchor="middle" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#fff">MAX, 14</text>
+  </svg>
+  <div class="bub" style="top:28px;left:8px;">
+    <div class="bi blue" style="max-width:140px;font-size:0.7rem;">Noch ein Video&#8230; noch ein Like&#8230; noch ein Post&#8230;</div>
+    <div class="bt dl-b"></div>
+  </div>
+</div>
+
+<div class="cell" style="min-height:280px;background:#080818;">
+  <div class="pnum">2</div>
+  <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="280" fill="#080818"/>
+    <circle cx="160" cy="140" r="120" fill="none" stroke="#0077CC" stroke-width="0.5" opacity=".3"/>
+    <circle cx="160" cy="140" r="95" fill="none" stroke="#4fc3f7" stroke-width="0.8" opacity=".4"/>
+    <circle cx="160" cy="140" r="70" fill="none" stroke="#0077CC" stroke-width="1" opacity=".5"/>
+    <circle cx="160" cy="140" r="48" fill="none" stroke="#4fc3f7" stroke-width="1.5" opacity=".7"/>
+    <circle cx="160" cy="140" r="28" fill="#030d1a" stroke="#7BC8F5" stroke-width="2" opacity=".9"/>
+    <g opacity=".3">
+      <line x1="160" y1="10" x2="160" y2="95" stroke="#4fc3f7" stroke-width="1"/>
+      <line x1="60" y1="40" x2="125" y2="108" stroke="#0077CC" stroke-width="1"/>
+      <line x1="260" y1="40" x2="195" y2="108" stroke="#4fc3f7" stroke-width="1"/>
+      <line x1="20" y1="140" x2="108" y2="140" stroke="#0077CC" stroke-width="1"/>
+      <line x1="300" y1="140" x2="212" y2="140" stroke="#4fc3f7" stroke-width="1"/>
+    </g>
+    <rect x="40" y="50" width="22" height="22" fill="#E74C3C" rx="5" opacity=".7"/>
+    <rect x="255" y="48" width="20" height="20" fill="#9b59b6" rx="5" opacity=".6"/>
+    <rect x="30" y="185" width="20" height="20" fill="#0077CC" rx="5" opacity=".6"/>
+    <rect x="258" y="185" width="22" height="22" fill="#e91e63" rx="5" opacity=".7"/>
+    <path d="M 140 120 Q 138 138 140 155 Q 142 165 160 168 Q 178 165 180 155 Q 182 138 180 120 Z" fill="#1e3a5f"/>
+    <path d="M 140 130 Q 120 122 100 115 Q 90 112 82 118" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 180 130 Q 200 122 220 115 Q 230 112 238 118" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <ellipse cx="80" cy="120" rx="8" ry="6" fill="#d4956a"/><ellipse cx="240" cy="120" rx="8" ry="6" fill="#d4956a"/>
+    <path d="M 148 165 Q 140 178 135 190" stroke="#16304f" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 172 165 Q 180 178 185 190" stroke="#16304f" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <rect x="152" y="103" width="16" height="20" fill="#d4956a" rx="3"/>
+    <ellipse cx="160" cy="88" rx="30" ry="34" fill="#d4956a"/>
+    <path d="M 132 95 Q 130 112 145 122 Q 160 128 175 122 Q 190 112 188 95" fill="#d4956a"/>
+    <ellipse cx="131" cy="90" rx="6" ry="8" fill="#c8845a"/>
+    <path d="M 132 68 Q 130 50 145 42 Q 160 36 175 42 Q 190 50 188 68 Q 185 58 175 55 Q 160 50 145 55 Q 135 58 132 68 Z" fill="#2a1a08"/>
+    <path d="M 132 68 Q 127 78 130 90 Q 132 86 133 78 Z" fill="#231508"/>
+    <path d="M 188 68 Q 193 78 190 90 Q 188 86 187 78 Z" fill="#231508"/>
+    <ellipse cx="148" cy="86" rx="11" ry="12" fill="#f0ece4"/><ellipse cx="172" cy="86" rx="11" ry="12" fill="#f0ece4"/>
+    <circle cx="148" cy="87" r="7" fill="#5a3a18"/><circle cx="172" cy="87" r="7" fill="#5a3a18"/>
+    <circle cx="148" cy="87" r="4.5" fill="#2a1a08"/><circle cx="172" cy="87" r="4.5" fill="#2a1a08"/>
+    <ellipse cx="151" cy="84" rx="3" ry="3.5" fill="#fff" opacity=".9"/><ellipse cx="175" cy="84" rx="3" ry="3.5" fill="#fff" opacity=".9"/>
+    <path d="M 137 72 Q 148 66 159 71" stroke="#2a1a08" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M 161 71 Q 172 66 183 72" stroke="#2a1a08" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M 143 112 Q 160 120 177 112 Q 170 130 160 133 Q 150 130 143 112 Z" fill="#8B0000"/>
+    <path d="M 145 113 Q 160 122 175 113 Q 168 118 160 120 Q 152 118 145 113 Z" fill="#c0392b"/>
+    <ellipse cx="240" cy="74" rx="6" ry="10" fill="#85B7EB" opacity=".7" transform="rotate(-20 240 74)"/>
+    <ellipse cx="80" cy="74" rx="5" ry="9" fill="#85B7EB" opacity=".6" transform="rotate(20 80 74)"/>
+    <text x="178" y="80" font-family="Bangers,sans-serif" font-size="40" fill="#c0392b">!!</text>
+  </svg>
+  <div class="bub" style="bottom:28px;left:50%;transform:translateX(-50%);">
+    <div class="bi shout" style="white-space:nowrap;">HILFE! Ich bin im Internet!!</div>
+  </div>
+  <div class="cap dark">Das Handy saugt Max ins Netz!</div>
+</div>
+</div>
+
+<!-- ROW 2: Im Netz -->
+<div class="grid g1">
+<div class="cell" style="min-height:220px;background:#080818;">
+  <div class="pnum">3</div>
+  <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+    <rect width="640" height="220" fill="#080818"/>
+    <g opacity=".12">
+      <line x1="0" y1="175" x2="640" y2="175" stroke="#4fc3f7" stroke-width="1"/>
+      <line x1="80" y1="175" x2="80" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+      <line x1="160" y1="175" x2="160" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+      <line x1="240" y1="175" x2="240" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+      <line x1="320" y1="175" x2="320" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+      <line x1="400" y1="175" x2="400" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+      <line x1="480" y1="175" x2="480" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+      <line x1="560" y1="175" x2="560" y2="220" stroke="#4fc3f7" stroke-width=".5"/>
+    </g>
+    <rect x="20" y="15" width="130" height="80" fill="#0d1a3e" stroke="#0077CC" stroke-width="1.5" rx="8"/>
+    <circle cx="55" cy="42" r="18" fill="#1a2a4e" stroke="#4fc3f7" stroke-width="1"/>
+    <text x="55" y="46" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#4fc3f7">&#128100;</text>
+    <text x="90" y="36" font-family="sans-serif" font-size="7" fill="#7BC8F5" font-weight="bold">MAX_AVATAR</text>
+    <text x="90" y="47" font-family="sans-serif" font-size="6" fill="#555">&#10084; 0 &#128712; 0</text>
+    <rect x="22" y="80" width="126" height="12" fill="#0077CC" rx="3"/>
+    <text x="85" y="89" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#fff">Keine Gef&#252;hle.</text>
+    <!-- MAX avatar realistic -->
+    <rect x="296" y="120" width="48" height="55" fill="#0077CC" rx="5" opacity=".85"/>
+    <rect x="296" y="133" width="48" height="2" fill="#4fc3f7" opacity=".6"/>
+    <rect x="310" y="103" width="20" height="20" fill="#d4956a" rx="3" opacity=".85"/>
+    <ellipse cx="320" cy="82" rx="32" ry="36" fill="#d4956a" opacity=".9"/>
+    <path d="M 290 90 Q 288 108 302 118 Q 320 126 338 118 Q 352 108 350 90" fill="#d4956a" opacity=".9"/>
+    <path d="M 290 65 Q 288 47 302 40 Q 320 33 338 40 Q 352 47 350 65 Q 347 55 338 52 Q 320 47 302 52 Q 292 56 290 65 Z" fill="#2a1a08"/>
+    <path d="M 290 65 Q 286 75 288 86 Q 291 82 292 73 Z" fill="#231508"/>
+    <ellipse cx="308" cy="82" rx="10" ry="10" fill="#f0ece4"/><ellipse cx="332" cy="82" rx="10" ry="10" fill="#f0ece4"/>
+    <circle cx="308" cy="82" r="6.5" fill="#0055a4"/><circle cx="332" cy="82" r="6.5" fill="#0055a4"/>
+    <circle cx="308" cy="82" r="4" fill="#003080"/><circle cx="332" cy="82" r="4" fill="#003080"/>
+    <circle cx="310" cy="80" r="2" fill="#4fc3f7" opacity=".8"/><circle cx="334" cy="80" r="2" fill="#4fc3f7" opacity=".8"/>
+    <path d="M 298 71 Q 308 68 318 71" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <path d="M 322 71 Q 332 68 342 71" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <path d="M 310 112 Q 320 113 330 112" stroke="#9a5530" stroke-width="2" fill="none"/>
+    <rect x="300" y="175" width="16" height="22" fill="#003366" rx="3"/><rect x="324" y="175" width="16" height="22" fill="#003366" rx="3"/>
+    <rect x="296" y="57" width="48" height="14" fill="#0d1a3e" stroke="#4fc3f7" stroke-width="1" rx="3"/>
+    <text x="320" y="67" text-anchor="middle" font-family="monospace" font-size="7" fill="#4fc3f7">MAX_AVATAR</text>
+    <circle cx="195" cy="80" r="22" fill="#E74C3C" opacity=".9"/>
+    <text x="195" y="86" text-anchor="middle" font-family="Bangers,sans-serif" font-size="16" fill="#fff">+1k</text>
+    <text x="145" y="150" font-family="monospace" font-size="8" fill="#0077CC" opacity=".3">0110 1001</text>
+  </svg>
+  <div class="bub" style="bottom:28px;left:20px;">
+    <div class="bi robot" style="max-width:175px;font-size:0.72rem;">Ich bin ein Avatar. Ich habe keine Gef&#252;hle. Ich bin nicht real.</div>
+    <div class="bt dl-h" style="border-top-color:#4fc3f7;"></div>
+  </div>
+  <div class="cap dark">Max ist jetzt ein Avatar ohne Gef&#252;hle.</div>
+</div>
+</div>
+
+<!-- ROW 3: Erinnerungen + Ausloggen -->
+<div class="grid g2">
+<div class="cell" style="min-height:260px;background:#0a1025;">
+  <div class="pnum">4</div>
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="260" fill="#0a1025"/>
+    <!-- memory: family -->
+    <ellipse cx="80" cy="80" rx="62" ry="52" fill="#fff8f0" stroke="#BA7517" stroke-width="1.5" opacity=".92"/>
+    <ellipse cx="58" cy="75" rx="16" ry="18" fill="#e8b07a"/>
+    <path d="M 44 82 Q 42 97 53 105 Q 58 108 68 105 Q 76 97 74 82" fill="#e8b07a"/>
+    <path d="M 42 70 Q 40 55 54 48 Q 63 44 73 50 Q 80 57 78 70 Q 75 62 68 60 Q 56 57 46 62 Z" fill="#8B4513"/>
+    <path d="M 55 79 Q 58 76 61 79" stroke="#2a1a08" stroke-width="1" fill="none"/>
+    <path d="M 56 87 Q 58 90 60 87" stroke="#c0392b" stroke-width="1.2" fill="#FFB6C1"/>
+    <ellipse cx="103" cy="75" rx="15" ry="17" fill="#e0a870"/>
+    <path d="M 90 82 Q 88 96 98 104 Q 103 107 113 104 Q 120 96 118 82" fill="#e0a870"/>
+    <path d="M 90 68 Q 88 53 102 47 Q 110 44 118 50 Q 124 57 122 68 Q 119 61 112 59 Q 100 56 92 62 Z" fill="#3d2b1a"/>
+    <path d="M 99 79 Q 103 76 107 79" stroke="#2a1a08" stroke-width="1" fill="none"/>
+    <path d="M 100 87 Q 103 90 106 87" stroke="#c0392b" stroke-width="1.2" fill="#FFB6C1"/>
+    <text x="80" y="118" text-anchor="middle" font-family="Comic Neue,cursive" font-size="7.5" fill="#8B6914" font-style="italic" font-weight="bold">Familie&#8230;</text>
+    <!-- memory: 10VP class — small crowd -->
+    <ellipse cx="240" cy="85" rx="68" ry="55" fill="#E3F2FF" stroke="#0077CC" stroke-width="1.5" opacity=".92"/>
+    <!-- row of small student heads representing the 20 classmates -->
+    <!-- front row: 7 heads -->
+    <ellipse cx="196" cy="90" rx="9" ry="10" fill="#d4956a"/>
+    <path d="M 189 85 Q 188 78 195 75 Q 200 73 205 77 Q 208 82 205 87 Z" fill="#2a1a08"/>
+    <ellipse cx="212" cy="88" rx="9" ry="10" fill="#e0a870"/>
+    <path d="M 205 83 Q 204 76 211 73 Q 216 71 221 75 Q 224 80 221 85 Z" fill="#5a3a1a"/>
+    <ellipse cx="228" cy="90" rx="9" ry="10" fill="#c8845a"/>
+    <path d="M 221 85 Q 220 78 227 75 Q 232 73 237 77 Q 240 82 237 87 Z" fill="#3d2b1a"/>
+    <ellipse cx="244" cy="88" rx="9" ry="10" fill="#e8b07a"/>
+    <path d="M 237 83 Q 236 76 243 73 Q 248 71 253 75 Q 256 80 253 85 Z" fill="#1a1a1a"/>
+    <ellipse cx="260" cy="90" rx="9" ry="10" fill="#d4956a"/>
+    <path d="M 253 85 Q 252 78 259 75 Q 264 73 269 77 Q 272 82 269 87 Z" fill="#5a3a1a"/>
+    <ellipse cx="276" cy="88" rx="9" ry="10" fill="#c0845a"/>
+    <path d="M 269 83 Q 268 76 275 73 Q 280 71 285 75 Q 288 80 285 85 Z" fill="#2a1a08"/>
+    <ellipse cx="290" cy="90" rx="9" ry="10" fill="#e8b07a"/>
+    <!-- back row: 8 heads smaller -->
+    <ellipse cx="192" cy="72" rx="7" ry="8" fill="#c8845a" opacity=".9"/>
+    <ellipse cx="205" cy="68" rx="7" ry="8" fill="#e0a870" opacity=".9"/>
+    <ellipse cx="218" cy="70" rx="7" ry="8" fill="#d4956a" opacity=".9"/>
+    <ellipse cx="231" cy="68" rx="7" ry="8" fill="#c8845a" opacity=".9"/>
+    <ellipse cx="244" cy="70" rx="7" ry="8" fill="#e8b07a" opacity=".9"/>
+    <ellipse cx="257" cy="68" rx="7" ry="8" fill="#d4956a" opacity=".9"/>
+    <ellipse cx="270" cy="70" rx="7" ry="8" fill="#e0a870" opacity=".9"/>
+    <ellipse cx="283" cy="68" rx="7" ry="8" fill="#c0845a" opacity=".9"/>
+    <!-- tiny back row: 5 heads -->
+    <ellipse cx="205" cy="57" rx="5.5" ry="6" fill="#d4956a" opacity=".7"/>
+    <ellipse cx="218" cy="55" rx="5.5" ry="6" fill="#c8845a" opacity=".7"/>
+    <ellipse cx="231" cy="57" rx="5.5" ry="6" fill="#e0a870" opacity=".7"/>
+    <ellipse cx="244" cy="55" rx="5.5" ry="6" fill="#d4956a" opacity=".7"/>
+    <ellipse cx="257" cy="57" rx="5.5" ry="6" fill="#c8845a" opacity=".7"/>
+    <!-- label -->
+    <text x="240" y="125" text-anchor="middle" font-family="Comic Neue,cursive" font-size="7.5" fill="#0077CC" font-style="italic" font-weight="bold">Klasse 10VP&#8230;</text>
+    <!-- Max small in centre -->
+    <ellipse cx="160" cy="185" rx="16" ry="17" fill="#d4956a" opacity=".8"/>
+    <path d="M 148 192 Q 147 202 153 207 Q 160 210 167 207 Q 173 202 172 192" fill="#d4956a" opacity=".8"/>
+    <path d="M 148 179 Q 147 169 155 165 Q 165 162 172 167 Q 178 173 176 179 Q 173 173 166 171 Q 155 169 150 174 Z" fill="#2a1a08"/>
+    <ellipse cx="152" cy="187" rx="2.5" ry="4" fill="#4fc3f7" opacity=".7"/>
+  </svg>
+  <div class="bub" style="top:8px;right:8px;">
+    <div class="bi sad" style="max-width:125px;font-size:0.7rem;">Ich&#8230; erinnere mich. Mama&#8230; Papa&#8230; meine Klasse&#8230;</div>
+    <div class="bt dr" style="border-top-color:#993C1D;"></div>
+  </div>
+  <div class="cap dark">Max erinnert sich an das echte Leben&#8230;</div>
+</div>
+
+<div class="cell" style="min-height:260px;background:#080818;">
+  <div class="pnum">5</div>
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="260" fill="#080818"/>
+    <rect x="190" y="80" width="115" height="55" fill="#0d3a25" rx="8" stroke="#1D9E75" stroke-width="2"/>
+    <ellipse cx="247" cy="107" rx="65" ry="35" fill="#1D9E75" opacity=".06"/>
+    <text x="247" y="112" text-anchor="middle" font-family="Bangers,sans-serif" font-size="18" fill="#1D9E75" letter-spacing="1">AUSLOGGEN</text>
+    <line x1="170" y1="107" x2="188" y2="107" stroke="#9FE1CB" stroke-width="2" stroke-dasharray="4,3"/>
+    <polygon points="188,101 200,107 188,113" fill="#9FE1CB"/>
+    <path d="M 85 120 Q 83 145 85 168 Q 87 178 100 182 Q 115 186 128 180 Q 138 174 136 160 Q 134 140 132 120 Z" fill="#1e3a5f"/>
+    <path d="M 132 135 Q 148 125 162 115 Q 170 110 175 114" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 88 140 Q 72 148 60 152 Q 52 154 50 160" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <ellipse cx="174" cy="115" rx="7" ry="6" fill="#d4956a"/><ellipse cx="49" cy="162" rx="7" ry="6" fill="#d4956a"/>
+    <path d="M 94 178 Q 86 195 80 210 Q 77 218 80 222" stroke="#16304f" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M 120 180 Q 130 196 136 210 Q 139 218 137 222" stroke="#16304f" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <ellipse cx="80" cy="223" rx="12" ry="5" fill="#1a1a1a"/><ellipse cx="137" cy="222" rx="12" ry="5" fill="#1a1a1a"/>
+    <rect x="100" y="101" width="18" height="22" fill="#d4956a" rx="3"/>
+    <ellipse cx="109" cy="80" rx="30" ry="33" fill="#d4956a"/>
+    <path d="M 81 88 Q 79 105 92 115 Q 109 123 126 115 Q 139 105 137 88" fill="#d4956a"/>
+    <ellipse cx="80" cy="82" rx="6" ry="8" fill="#c8845a"/>
+    <path d="M 81 65 Q 79 47 92 40 Q 109 33 126 40 Q 139 47 137 65 Q 133 54 124 51 Q 109 46 95 51 Q 85 56 81 65 Z" fill="#2a1a08"/>
+    <path d="M 81 65 Q 74 72 76 82 Q 79 78 80 70 Z" fill="#231508"/>
+    <path d="M 137 65 Q 143 60 148 53" stroke="#2a1a08" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="97" cy="80" rx="9" ry="8" fill="#f0ece4"/><ellipse cx="121" cy="80" rx="9" ry="8" fill="#f0ece4"/>
+    <circle cx="99" cy="80" r="5.5" fill="#5a3a18"/><circle cx="123" cy="80" r="5.5" fill="#5a3a18"/>
+    <circle cx="99" cy="80" r="3.5" fill="#2a1a08"/><circle cx="123" cy="80" r="3.5" fill="#2a1a08"/>
+    <circle cx="101" cy="78" r="1.8" fill="#fff" opacity=".9"/><circle cx="125" cy="78" r="1.8" fill="#fff" opacity=".9"/>
+    <path d="M 88 70 Q 97 66 106 70" stroke="#2a1a08" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M 112 70 Q 121 66 130 70" stroke="#2a1a08" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M 98 108 Q 109 112 120 108" stroke="#9a5530" stroke-width="2" fill="none"/>
+    <g opacity=".2">
+      <line x1="0" y1="140" x2="55" y2="155" stroke="#4fc3f7" stroke-width="1.5"/>
+      <line x1="0" y1="160" x2="55" y2="165" stroke="#4fc3f7" stroke-width="1.5"/>
+    </g>
+  </svg>
+  <div class="bub" style="top:10px;left:50%;transform:translateX(-50%);">
+    <div class="bi shout" style="max-width:220px;font-size:0.78rem;">Nein! Ich will keine Likes! Ich will meine Klasse! AUSLOGGEN!!</div>
+  </div>
+  <div class="cap dark">Max l&#228;uft zum Ausloggen-Knopf!</div>
+</div>
+</div>
+
+<!-- ROW 4: Famille + 10VP Klasse — LA GRANDE SCENE -->
+<div class="grid g2">
+<div class="cell" style="min-height:260px;background:#fff8f0;">
+  <div class="pnum">6</div>
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="260" fill="#fff8f5"/>
+    <rect width="320" height="90" fill="#fef0e6"/>
+    <rect x="0" y="168" width="320" height="92" fill="#f0e0cc"/>
+    <line x1="0" y1="168" x2="320" y2="168" stroke="#d4a870" stroke-width="1.5"/>
+    <rect x="220" y="12" width="80" height="60" fill="#c8e6ff" stroke="#d4a574" stroke-width="1.5" rx="3"/>
+    <circle cx="285" cy="26" r="14" fill="#FFD700" opacity=".7"/>
+    <!-- Mom -->
+    <ellipse cx="60" cy="118" rx="20" ry="22" fill="#e8b07a"/>
+    <path d="M 42 126 Q 40 142 52 150 Q 60 155 72 150 Q 80 142 78 126" fill="#e8b07a"/>
+    <path d="M 42 108 Q 40 93 52 87 Q 60 83 70 88 Q 78 95 76 108 Q 73 99 66 97 Q 55 93 46 99 Z" fill="#8B4513"/>
+    <path d="M 40 108 Q 36 118 38 127 Q 41 122 42 114 Z" fill="#7a3a10"/>
+    <ellipse cx="52" cy="120" rx="7" ry="7" fill="#f0ece4"/><ellipse cx="68" cy="120" rx="7" ry="7" fill="#f0ece4"/>
+    <circle cx="53" cy="120" r="4.5" fill="#8B4513"/><circle cx="69" cy="120" r="4.5" fill="#8B4513"/>
+    <circle cx="53" cy="120" r="2.8" fill="#5a2a08"/><circle cx="69" cy="120" r="2.8" fill="#5a2a08"/>
+    <path d="M 50 130 Q 60 135 70 130" stroke="#c0392b" stroke-width="1.5" fill="#FF9999"/>
+    <rect x="42" y="153" width="38" height="35" fill="#E74C3C" rx="5"/>
+    <!-- Dad -->
+    <ellipse cx="258" cy="118" rx="20" ry="22" fill="#e0a870"/>
+    <path d="M 240 126 Q 238 142 250 150 Q 258 155 270 150 Q 278 142 276 126" fill="#e0a870"/>
+    <path d="M 240 108 Q 238 93 250 87 Q 258 83 268 88 Q 276 95 274 108 Q 271 99 264 97 Q 253 93 244 99 Z" fill="#3d2b1a"/>
+    <ellipse cx="250" cy="120" rx="7" ry="7" fill="#f0ece4"/><ellipse cx="266" cy="120" rx="7" ry="7" fill="#f0ece4"/>
+    <circle cx="251" cy="120" r="4.5" fill="#3d2b1a"/><circle cx="267" cy="120" r="4.5" fill="#3d2b1a"/>
+    <circle cx="251" cy="120" r="2.8" fill="#2a1a08"/><circle cx="267" cy="120" r="2.8" fill="#2a1a08"/>
+    <path d="M 248 130 Q 258 135 268 130" stroke="#c0392b" stroke-width="1.5" fill="#FF9999"/>
+    <rect x="240" y="153" width="38" height="35" fill="#2980b9" rx="5"/>
+    <!-- MAX -->
+    <ellipse cx="160" cy="116" rx="24" ry="26" fill="#d4956a"/>
+    <path d="M 138 124 Q 136 140 148 149 Q 160 155 172 149 Q 184 140 182 124" fill="#d4956a"/>
+    <path d="M 138 108 Q 136 92 148 85 Q 160 80 172 85 Q 184 92 182 108 Q 179 98 172 96 Q 160 92 148 96 Q 140 100 138 108 Z" fill="#2a1a08"/>
+    <path d="M 138 108 Q 134 118 136 128 Q 139 124 140 116 Z" fill="#231508"/>
+    <path d="M 182 108 Q 186 118 184 128 Q 181 124 180 116 Z" fill="#231508"/>
+    <ellipse cx="149" cy="117" rx="9" ry="8" fill="#f0ece4"/><ellipse cx="171" cy="117" rx="9" ry="8" fill="#f0ece4"/>
+    <path d="M 141 115 Q 149 109 157 115" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4"/>
+    <path d="M 163 115 Q 171 109 179 115" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4"/>
+    <path d="M 143 120 Q 140 130 141 140" stroke="#4fc3f7" stroke-width="2" fill="none" opacity=".7"/>
+    <path d="M 177 120 Q 180 130 179 140" stroke="#4fc3f7" stroke-width="2" fill="none" opacity=".7"/>
+    <path d="M 148 140 Q 160 150 172 140" stroke="#c0392b" stroke-width="2" fill="#FF9999"/>
+    <rect x="138" y="154" width="44" height="32" fill="#0077CC" rx="5"/>
+    <path d="M 80 155 Q 106 162 140 158" stroke="#e8b07a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 240 155 Q 214 162 180 158" stroke="#e0a870" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <text x="160" y="68" text-anchor="middle" font-family="serif" font-size="24" fill="#E74C3C">&#10084;</text>
+    <text x="108" y="78" font-family="serif" font-size="15" fill="#E74C3C">&#10084;</text>
+    <text x="206" y="78" font-family="serif" font-size="15" fill="#0077CC">&#10084;</text>
+  </svg>
+  <div class="bub" style="bottom:30px;left:50%;transform:translateX(-50%);">
+    <div class="bi happy" style="max-width:190px;font-size:0.7rem;">Mama! Papa! Ich liebe euch! Echte Menschen sind besser als Likes!</div>
+    <div class="bt dl-h" style="border-top-color:#1D9E75;margin:0 auto;"></div>
+  </div>
+  <div class="cap green">Max ist zur&#252;ck! Er umarmt seine Familie!</div>
+</div>
+
+<!-- P7: DIE 10VP KLASSE — 20 Sch&#252;ler -->
+<div class="cell" style="min-height:260px;background:#f0f4ff;">
+  <div class="pnum">7</div>
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="260" fill="#eef2ff"/>
+    <!-- school courtyard background -->
+    <rect width="320" height="90" fill="#d8e8ff"/>
+    <rect x="0" y="168" width="320" height="92" fill="#c8d8f0"/>
+    <line x1="0" y1="168" x2="320" y2="168" stroke="#8090c0" stroke-width="1.5"/>
+    <!-- school wall + windows -->
+    <rect x="0" y="0" width="320" height="55" fill="#c0d0e8"/>
+    <rect x="20" y="8" width="40" height="30" fill="#a0c0e0" stroke="#8090c0" stroke-width="1" rx="2"/>
+    <rect x="70" y="8" width="40" height="30" fill="#a0c0e0" stroke="#8090c0" stroke-width="1" rx="2"/>
+    <rect x="120" y="8" width="40" height="30" fill="#a0c0e0" stroke="#8090c0" stroke-width="1" rx="2"/>
+    <rect x="170" y="8" width="40" height="30" fill="#a0c0e0" stroke="#8090c0" stroke-width="1" rx="2"/>
+    <rect x="220" y="8" width="40" height="30" fill="#a0c0e0" stroke="#8090c0" stroke-width="1" rx="2"/>
+    <rect x="270" y="8" width="40" height="30" fill="#a0c0e0" stroke="#8090c0" stroke-width="1" rx="2"/>
+    <!-- "10VP" banner -->
+    <rect x="100" y="48" width="120" height="22" fill="#0077CC" rx="4"/>
+    <text x="160" y="63" text-anchor="middle" font-family="Bangers,sans-serif" font-size="14" fill="#fff" letter-spacing="2">KLASSE 10VP</text>
+
+    <!-- 20 STUDENTS in crowd — 3 rows, realistic varied faces/hair -->
+    <!-- Helper: each student is a head+torso group, varied skin/hair -->
+
+    <!-- ROW BACK (row 3) — 7 students, small, y~95 -->
+    <!-- S1 -->
+    <ellipse cx="38" cy="95" rx="11" ry="12" fill="#e8b07a"/>
+    <path d="M 28 88 Q 27 80 35 77 Q 43 74 49 79 Q 53 85 49 91 Z" fill="#2a1a08"/>
+    <path d="M 27 88 Q 24 94 26 100 Z" fill="#231508"/>
+    <!-- S2 -->
+    <ellipse cx="72" cy="93" rx="11" ry="12" fill="#c8845a"/>
+    <path d="M 62 86 Q 61 78 69 75 Q 77 72 83 77 Q 87 83 83 89 Z" fill="#5a3a1a"/>
+    <!-- S3 -->
+    <ellipse cx="106" cy="95" rx="11" ry="12" fill="#e0a870"/>
+    <path d="M 96 88 Q 95 80 103 77 Q 111 74 117 79 Q 121 85 117 91 Z" fill="#1a1a1a"/>
+    <!-- S4 -->
+    <ellipse cx="140" cy="93" rx="11" ry="12" fill="#d4956a"/>
+    <path d="M 130 86 Q 129 78 137 75 Q 145 72 151 77 Q 155 83 151 89 Z" fill="#3d2b1a"/>
+    <!-- S5 -->
+    <ellipse cx="174" cy="95" rx="11" ry="12" fill="#c0845a"/>
+    <path d="M 164 88 Q 163 80 171 77 Q 179 74 185 79 Q 189 85 185 91 Z" fill="#6a4a2a"/>
+    <!-- S6 -->
+    <ellipse cx="208" cy="93" rx="11" ry="12" fill="#e8b07a"/>
+    <path d="M 198 86 Q 197 78 205 75 Q 213 72 219 77 Q 223 83 219 89 Z" fill="#4a2a0a"/>
+    <!-- S7 -->
+    <ellipse cx="242" cy="95" rx="11" ry="12" fill="#d4956a"/>
+    <path d="M 232 88 Q 231 80 239 77 Q 247 74 253 79 Q 257 85 253 91 Z" fill="#2a1a08"/>
+
+    <!-- ROW MID (row 2) — 7 students, y~122 -->
+    <!-- S8 -->
+    <ellipse cx="25" cy="122" rx="13" ry="14" fill="#e0a870"/>
+    <path d="M 13 114 Q 12 104 22 100 Q 30 97 38 103 Q 43 110 38 117 Z" fill="#8B4513"/>
+    <path d="M 12 114 Q 9 121 11 129 Z" fill="#7a3a10"/>
+    <ellipse cx="20" cy="124" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="30" cy="124" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="20" cy="124" r="3.2" fill="#5a3a18"/><circle cx="30" cy="124" r="3.2" fill="#5a3a18"/>
+    <circle cx="20" cy="124" r="2" fill="#2a1a08"/><circle cx="30" cy="124" r="2" fill="#2a1a08"/>
+    <path d="M 18 131 Q 25 135 32 131" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S9 -->
+    <ellipse cx="58" cy="122" rx="13" ry="14" fill="#c8845a"/>
+    <path d="M 46 114 Q 45 104 55 100 Q 63 97 71 103 Q 76 110 71 117 Z" fill="#1a1a1a"/>
+    <path d="M 45 114 Q 42 121 44 129 Z" fill="#111"/>
+    <ellipse cx="53" cy="124" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="63" cy="124" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="53" cy="124" r="3.2" fill="#3d2b1a"/><circle cx="63" cy="124" r="3.2" fill="#3d2b1a"/>
+    <circle cx="53" cy="124" r="2" fill="#2a1a08"/><circle cx="63" cy="124" r="2" fill="#2a1a08"/>
+    <path d="M 51 131 Q 58 135 65 131" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S10 -->
+    <ellipse cx="91" cy="122" rx="13" ry="14" fill="#e8b07a"/>
+    <path d="M 79 114 Q 78 104 88 100 Q 96 97 104 103 Q 109 110 104 117 Z" fill="#6a4a2a"/>
+    <ellipse cx="86" cy="124" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="96" cy="124" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="86" cy="124" r="3.2" fill="#8B4513"/><circle cx="96" cy="124" r="3.2" fill="#8B4513"/>
+    <circle cx="86" cy="124" r="2" fill="#5a2a08"/><circle cx="96" cy="124" r="2" fill="#5a2a08"/>
+    <path d="M 84 131 Q 91 135 98 131" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S11 -->
+    <ellipse cx="228" cy="122" rx="13" ry="14" fill="#c0845a"/>
+    <path d="M 216 114 Q 215 104 225 100 Q 233 97 241 103 Q 246 110 241 117 Z" fill="#3d2b1a"/>
+    <ellipse cx="223" cy="124" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="233" cy="124" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="223" cy="124" r="3.2" fill="#5a3a18"/><circle cx="233" cy="124" r="3.2" fill="#5a3a18"/>
+    <circle cx="223" cy="124" r="2" fill="#2a1a08"/><circle cx="233" cy="124" r="2" fill="#2a1a08"/>
+    <path d="M 221 131 Q 228 135 235 131" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S12 -->
+    <ellipse cx="261" cy="122" rx="13" ry="14" fill="#e0a870"/>
+    <path d="M 249 114 Q 248 104 258 100 Q 266 97 274 103 Q 279 110 274 117 Z" fill="#5a3a1a"/>
+    <path d="M 275 114 Q 278 121 276 129 Z" fill="#4a2a0a"/>
+    <ellipse cx="256" cy="124" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="266" cy="124" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="256" cy="124" r="3.2" fill="#3d2b1a"/><circle cx="266" cy="124" r="3.2" fill="#3d2b1a"/>
+    <circle cx="256" cy="124" r="2" fill="#2a1a08"/><circle cx="266" cy="124" r="2" fill="#2a1a08"/>
+    <path d="M 254 131 Q 261 135 268 131" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S13 -->
+    <ellipse cx="294" cy="122" rx="13" ry="14" fill="#d4956a"/>
+    <path d="M 282 114 Q 281 104 291 100 Q 299 97 307 103 Q 312 110 307 117 Z" fill="#2a1a08"/>
+    <ellipse cx="289" cy="124" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="299" cy="124" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="289" cy="124" r="3.2" fill="#5a3a18"/><circle cx="299" cy="124" r="3.2" fill="#5a3a18"/>
+    <circle cx="289" cy="124" r="2" fill="#2a1a08"/><circle cx="299" cy="124" r="2" fill="#2a1a08"/>
+    <path d="M 287 131 Q 294 135 301 131" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+
+    <!-- ROW FRONT (row 1) — 6 students, bigger, y~152, surrounding MAX -->
+    <!-- MAX in centre front -->
+    <ellipse cx="160" cy="150" rx="16" ry="17" fill="#d4956a"/>
+    <path d="M 146 158 Q 145 168 152 173 Q 160 176 168 173 Q 175 168 174 158" fill="#d4956a"/>
+    <path d="M 146 144 Q 145 134 153 130 Q 163 127 170 132 Q 176 138 174 144 Q 171 137 165 135 Q 154 132 149 137 Z" fill="#2a1a08"/>
+    <!-- Max happy eyes -->
+    <ellipse cx="153" cy="152" rx="6" ry="6" fill="#f0ece4"/><ellipse cx="167" cy="152" rx="6" ry="6" fill="#f0ece4"/>
+    <path d="M 148 150 Q 153 145 158 150" stroke="#2a1a08" stroke-width="2" fill="#f0ece4"/>
+    <path d="M 162 150 Q 167 145 172 150" stroke="#2a1a08" stroke-width="2" fill="#f0ece4"/>
+    <path d="M 150 162 Q 160 168 170 162" stroke="#c0392b" stroke-width="2" fill="#FF9999"/>
+    <!-- happy tear -->
+    <path d="M 149 155 Q 147 162 148 168" stroke="#4fc3f7" stroke-width="1.5" fill="none" opacity=".7"/>
+    <rect x="148" y="176" width="24" height="18" fill="#0077CC" rx="3"/>
+    <!-- S14 left of Max -->
+    <ellipse cx="120" cy="152" rx="14" ry="15" fill="#c8845a"/>
+    <path d="M 107 144 Q 106 134 116 130 Q 124 127 132 132 Q 137 139 132 145 Z" fill="#1a1a1a"/>
+    <ellipse cx="115" cy="154" rx="5.5" ry="5.5" fill="#f0ece4"/><ellipse cx="125" cy="154" rx="5.5" ry="5.5" fill="#f0ece4"/>
+    <circle cx="116" cy="154" r="3.5" fill="#3d2b1a"/><circle cx="126" cy="154" r="3.5" fill="#3d2b1a"/>
+    <circle cx="116" cy="154" r="2.2" fill="#2a1a08"/><circle cx="126" cy="154" r="2.2" fill="#2a1a08"/>
+    <path d="M 114 163 Q 120 167 126 163" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S15 right of Max -->
+    <ellipse cx="200" cy="152" rx="14" ry="15" fill="#e8b07a"/>
+    <path d="M 188 144 Q 187 134 197 130 Q 205 127 213 132 Q 218 139 213 145 Z" fill="#8B4513"/>
+    <path d="M 214 144 Q 217 151 215 159 Z" fill="#7a3a10"/>
+    <ellipse cx="195" cy="154" rx="5.5" ry="5.5" fill="#f0ece4"/><ellipse cx="205" cy="154" rx="5.5" ry="5.5" fill="#f0ece4"/>
+    <circle cx="196" cy="154" r="3.5" fill="#8B4513"/><circle cx="206" cy="154" r="3.5" fill="#8B4513"/>
+    <circle cx="196" cy="154" r="2.2" fill="#5a2a08"/><circle cx="206" cy="154" r="2.2" fill="#5a2a08"/>
+    <path d="M 194 163 Q 200 167 206 163" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S16 far left -->
+    <ellipse cx="58" cy="152" rx="13" ry="14" fill="#e0a870"/>
+    <path d="M 46 144 Q 45 134 55 130 Q 63 127 71 132 Q 76 139 71 145 Z" fill="#6a4a2a"/>
+    <ellipse cx="53" cy="154" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="63" cy="154" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="53" cy="154" r="3.2" fill="#5a3a18"/><circle cx="63" cy="154" r="3.2" fill="#5a3a18"/>
+    <circle cx="53" cy="154" r="2" fill="#2a1a08"/><circle cx="63" cy="154" r="2" fill="#2a1a08"/>
+    <path d="M 51 162 Q 58 166 65 162" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- S17 far right -->
+    <ellipse cx="262" cy="152" rx="13" ry="14" fill="#d4956a"/>
+    <path d="M 250 144 Q 249 134 259 130 Q 267 127 275 132 Q 280 139 275 145 Z" fill="#3d2b1a"/>
+    <ellipse cx="257" cy="154" rx="5" ry="5" fill="#f0ece4"/><ellipse cx="267" cy="154" rx="5" ry="5" fill="#f0ece4"/>
+    <circle cx="257" cy="154" r="3.2" fill="#5a3a18"/><circle cx="267" cy="154" r="3.2" fill="#5a3a18"/>
+    <circle cx="257" cy="154" r="2" fill="#2a1a08"/><circle cx="267" cy="154" r="2" fill="#2a1a08"/>
+    <path d="M 255 162 Q 262 166 269 162" stroke="#c0392b" stroke-width="1.2" fill="#FF9999"/>
+    <!-- arms reaching toward Max from sides — group hug energy -->
+    <path d="M 107 162 Q 128 160 146 165" stroke="#c8845a" stroke-width="7" fill="none" stroke-linecap="round" opacity=".7"/>
+    <path d="M 174 165 Q 188 162 213 162" stroke="#e8b07a" stroke-width="7" fill="none" stroke-linecap="round" opacity=".7"/>
+    <!-- hearts everywhere -->
+    <text x="160" y="68" text-anchor="middle" font-family="serif" font-size="20" fill="#E74C3C">&#10084;</text>
+    <text x="88" y="78" font-family="serif" font-size="14" fill="#0077CC">&#10084;</text>
+    <text x="228" y="78" font-family="serif" font-size="14" fill="#E74C3C">&#10084;</text>
+    <text x="50" y="108" font-family="serif" font-size="12" fill="#534AB7">&#10084;</text>
+    <text x="264" y="108" font-family="serif" font-size="12" fill="#1D9E75">&#10084;</text>
+  </svg>
+  <div class="bub" style="bottom:30px;left:50%;transform:translateX(-50%);">
+    <div class="bi happy" style="max-width:210px;font-size:0.7rem;">Meine Klasse!! Ich liebe euch alle! Ihr seid die besten Mitsch&#252;ler der Welt!!</div>
+    <div class="bt dl-h" style="border-top-color:#1D9E75;margin:0 auto;"></div>
+  </div>
+  <div class="cap green">Max trifft seine 20 Mitsch&#252;ler der Klasse 10VP!</div>
+</div>
+</div>
+
+<!-- ROW 5: Finale -->
+<div class="grid g1">
+<div class="cell" style="min-height:200px;background:#fff9f0;">
+  <div class="pnum">8</div>
+  <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="640" height="200" fill="#fff9f5"/>
+    <rect width="640" height="75" fill="#FFE0B2"/>
+    <circle cx="320" cy="28" r="32" fill="#FFD700" opacity=".7"/>
+    <rect x="238" y="28" width="164" height="82" fill="#f5e6c8" stroke="#d4a574" stroke-width="1.5"/>
+    <polygon points="228,28 412,28 320,2" fill="#c0392b" opacity=".65"/>
+    <rect x="300" y="68" width="22" height="42" fill="#8B6FBA" opacity=".7"/>
+    <!-- banner 10VP on school -->
+    <rect x="248" y="32" width="144" height="16" fill="#0077CC" rx="3"/>
+    <text x="320" y="43" text-anchor="middle" font-family="Bangers,sans-serif" font-size="10" fill="#fff" letter-spacing="1">KLASSE 10VP</text>
+    <rect x="0" y="152" width="640" height="48" fill="#7ec850"/>
+    <line x1="0" y1="152" x2="640" y2="152" stroke="#5a9a30" stroke-width="1.5"/>
+    <!-- discarded phone -->
+    <rect x="42" y="140" width="55" height="28" fill="#1a1a1a" rx="5" opacity=".4" transform="rotate(-12 42 140)"/>
+    <text x="65" y="148" text-anchor="middle" font-family="monospace" font-size="5.5" fill="#444" transform="rotate(-12 65 148)">NO SIGNAL</text>
+    <!-- MAX arms wide -->
+    <ellipse cx="320" cy="122" rx="26" ry="28" fill="#d4956a"/>
+    <path d="M 296 130 Q 294 148 306 157 Q 320 163 334 157 Q 346 148 344 130" fill="#d4956a"/>
+    <path d="M 296 114 Q 294 98 306 91 Q 320 85 334 91 Q 346 98 344 114 Q 341 103 334 101 Q 320 96 306 101 Q 297 105 296 114 Z" fill="#2a1a08"/>
+    <path d="M 296 114 Q 290 108 293 98 Q 287 106 291 116 Z" fill="#231508"/>
+    <path d="M 344 114 Q 350 108 347 98 Q 353 106 349 116 Z" fill="#231508"/>
+    <ellipse cx="307" cy="122" rx="10" ry="9" fill="#f0ece4"/><ellipse cx="333" cy="122" rx="10" ry="9" fill="#f0ece4"/>
+    <path d="M 298 120 Q 307 113 316 120" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4"/>
+    <path d="M 324 120 Q 333 113 342 120" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4"/>
+    <path d="M 307 143 Q 320 153 333 143" stroke="#c0392b" stroke-width="2.5" fill="#FF9999"/>
+    <rect x="294" y="160" width="52" height="34" fill="#0077CC" rx="5"/>
+    <path d="M 294 168 Q 258 150 225 142" stroke="#d4956a" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M 346 168 Q 382 150 415 142" stroke="#d4956a" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <text x="210" y="94" font-family="serif" font-size="20" fill="#E74C3C">&#10084;</text>
+    <text x="403" y="94" font-family="serif" font-size="20" fill="#0077CC">&#10084;</text>
+    <text x="160" y="112" font-family="serif" font-size="13" fill="#534AB7">&#10084;</text>
+    <text x="455" y="112" font-family="serif" font-size="13" fill="#1D9E75">&#10084;</text>
+    <text x="320" y="68" text-anchor="middle" font-family="serif" font-size="26" fill="#FFD700">&#10084;</text>
+  </svg>
+  <div class="bub" style="top:8px;left:50%;transform:translateX(-50%);">
+    <div class="bi happy" style="max-width:340px;font-size:0.75rem;border-width:2.5px;">Ein echtes Gespr&#228;ch mit meiner Klasse ist besser als 10.000 Likes! Sogar Deutsch mit Frau Schmid ist echter als das Internet!</div>
+    <div class="bt dl-h" style="border-top-color:#1D9E75;margin:0 auto;"></div>
+  </div>
+  <div class="cap green">Max legt sein Handy weg. Das echte Leben ist wunderbar!</div>
+</div>
+</div>
+
+<div style="text-align:center;margin-top:1rem;">
+  <button class="actbtn" onclick="tab('quiz')">Quiz machen &#9999;&#65039;</button>
+  <button class="actbtn green" onclick="tab('vocab')">Vokabeln lernen &#128218;</button>
+</div>
+</div>
+
+<!-- VOCAB -->
+<div id="tab-vocab" class="panel">
+<div class="vc">
+  <div class="vt">Vokabeln aus der Geschichte</div>
+  <div class="vg">
+    <div class="vi"><span class="vde">scrollen</span><span class="vfr">scroller</span></div>
+    <div class="vi"><span class="vde">das Handy</span><span class="vfr">le portable</span></div>
+    <div class="vi"><span class="vde">das Internet</span><span class="vfr">internet</span></div>
+    <div class="vi"><span class="vde">der Avatar</span><span class="vfr">l&#8217;avatar</span></div>
+    <div class="vi"><span class="vde">die Gef&#252;hle</span><span class="vfr">les &#233;motions</span></div>
+    <div class="vi"><span class="vde">leer</span><span class="vfr">vide</span></div>
+    <div class="vi"><span class="vde">echt / real</span><span class="vfr">vrai / r&#233;el</span></div>
+    <div class="vi"><span class="vde">der Like</span><span class="vfr">le like</span></div>
+    <div class="vi"><span class="vde">f&#252;hlen</span><span class="vfr">ressentir</span></div>
+    <div class="vi"><span class="vde">sich erinnern</span><span class="vfr">se souvenir</span></div>
+    <div class="vi"><span class="vde">ausloggen</span><span class="vfr">se d&#233;connecter</span></div>
+    <div class="vi"><span class="vde">das Gespr&#228;ch</span><span class="vfr">la conversation</span></div>
+    <div class="vi"><span class="vde">die Klasse</span><span class="vfr">la classe</span></div>
+    <div class="vi"><span class="vde">der Mitsch&#252;ler</span><span class="vfr">le/la camarade</span></div>
+    <div class="vi"><span class="vde">weglegen</span><span class="vfr">poser / laisser</span></div>
+    <div class="vi"><span class="vde">sogar</span><span class="vfr">m&#234;me</span></div>
+    <div class="vi"><span class="vde">wunderbar</span><span class="vfr">merveilleux</span></div>
+    <div class="vi"><span class="vde">tausendmal besser</span><span class="vfr">mille fois mieux</span></div>
+  </div>
+</div>
+<div style="text-align:center;margin-top:0.8rem;">
+  <button class="actbtn" onclick="tab('quiz')">Quiz starten &#9999;&#65039;</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="tab-quiz" class="panel">
+<div style="background:#111;border:1.5px solid #0077CC;border-radius:10px;padding:0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#7BC8F5;font-weight:700;">Lies die BD nochmal und beantworte die Fragen!</div>
+<div id="sdisplay" class="scorebox"><div class="scorenum" id="snum">0/0</div><div style="font-size:0.8rem;color:#888;margin-top:2px;">richtige Antworten</div></div>
+
+<div id="q1" class="qcard"><div class="qtxt"><span class="qn">1</span>Was macht Max am Anfang?</div><div class="opts">
+  <button class="opt" onclick="ans(this,1,false)">A) Er lernt f&#252;r die Schule.</button>
+  <button class="opt" onclick="ans(this,1,true)">B) Er scrollt seit 6 Stunden auf dem Handy.</button>
+  <button class="opt" onclick="ans(this,1,false)">C) Er spielt Fu&#223;ball.</button>
+</div><div class="fb" id="fb1"></div></div>
+
+<div id="q2" class="qcard"><div class="qtxt"><span class="qn">2</span>Was passiert pl&#246;tzlich mit Max?</div><div class="opts">
+  <button class="opt" onclick="ans(this,2,false)">A) Er schl&#228;ft ein.</button>
+  <button class="opt" onclick="ans(this,2,true)">B) Das Handy saugt ihn ins Internet.</button>
+  <button class="opt" onclick="ans(this,2,false)">C) Er verliert sein Handy.</button>
+</div><div class="fb" id="fb2"></div></div>
+
+<div id="q3" class="qcard"><div class="qtxt"><span class="qn">3</span>Was fehlt dem Avatar-Max?</div><div class="opts">
+  <button class="opt" onclick="ans(this,3,false)">A) Mehr Likes.</button>
+  <button class="opt" onclick="ans(this,3,true)">B) Gef&#252;hle &#8212; er f&#252;hlt nichts.</button>
+  <button class="opt" onclick="ans(this,3,false)">C) Ein neues Handy.</button>
+</div><div class="fb" id="fb3"></div></div>
+
+<div id="q4" class="qcard"><div class="qtxt"><span class="qn">4</span>Woran erinnert sich Max?</div><div class="opts">
+  <button class="opt" onclick="ans(this,4,true)">A) An seine Familie und seine Klasse 10VP.</button>
+  <button class="opt" onclick="ans(this,4,false)">B) An seine Lieblingsserie.</button>
+  <button class="opt" onclick="ans(this,4,false)">C) An seine Hausaufgaben.</button>
+</div><div class="fb" id="fb4"></div></div>
+
+<div id="q5" class="qcard"><div class="qtxt"><span class="qn">5</span>Wie kommt Max zur&#252;ck in die echte Welt?</div><div class="opts">
+  <button class="opt" onclick="ans(this,5,false)">A) Er wartet einfach.</button>
+  <button class="opt" onclick="ans(this,5,true)">B) Er l&#228;uft zum Ausloggen-Knopf.</button>
+  <button class="opt" onclick="ans(this,5,false)">C) Jemand hilft ihm von au&#223;en.</button>
+</div><div class="fb" id="fb5"></div></div>
+
+<div id="q6" class="qcard"><div class="qtxt"><span class="qn">6</span>Was sagt Max &#252;ber seine Klasse?</div><div class="opts">
+  <button class="opt" onclick="ans(this,6,false)">A) Die Klasse ist langweilig.</button>
+  <button class="opt" onclick="ans(this,6,true)">B) Sie sind die besten Mitsch&#252;ler der Welt!</button>
+  <button class="opt" onclick="ans(this,6,false)">C) Er will nie mehr in die Schule gehen.</button>
+</div><div class="fb" id="fb6"></div></div>
+
+<div id="q7" class="qcard"><div class="qtxt"><span class="qn">7</span>Was bedeutet &#8222;der Mitsch&#252;ler&#8221;?</div><div class="opts">
+  <button class="opt" onclick="ans(this,7,false)">A) le professeur</button>
+  <button class="opt" onclick="ans(this,7,true)">B) le/la camarade de classe</button>
+  <button class="opt" onclick="ans(this,7,false)">C) l&#8217;&#233;l&#232;ve seul</button>
+</div><div class="fb" id="fb7"></div></div>
+
+<div id="q8" class="qcard"><div class="qtxt"><span class="qn">8</span>Was bedeutet &#8222;ausloggen&#8221;?</div><div class="opts">
+  <button class="opt" onclick="ans(this,8,false)">A) se connecter</button>
+  <button class="opt" onclick="ans(this,8,true)">B) se d&#233;connecter</button>
+  <button class="opt" onclick="ans(this,8,false)">C) scroller</button>
+</div><div class="fb" id="fb8"></div></div>
+
+<div style="background:#003366;border-radius:8px;padding:6px 12px;margin-bottom:0.7rem;font-family:'Bangers',cursive;font-size:1rem;color:#7BC8F5;letter-spacing:1px;">&#9999;&#65039; Freie Antworten</div>
+
+<div class="openq"><div class="qtxt"><span class="qn green">9</span>Benutzt du viel dein Handy? Was machst du damit?</div>
+  <div style="margin-top:5px;"><span class="hint">Ich benutze mein Handy f&#252;r&#8230;</span><span class="hint">Ich schaue&#8230;</span><span class="hint">Ich schreibe mit&#8230;</span></div>
+  <textarea placeholder="Ich benutze mein Handy f&#252;r &#8230;"></textarea>
+</div>
+
+<div class="openq"><div class="qtxt"><span class="qn green">10</span>Sind deine Mitsch&#252;ler wichtig f&#252;r dich? Warum? Schreib zwei S&#228;tze!</div>
+  <div style="margin-top:5px;"><span class="hint">Meine Mitsch&#252;ler sind&#8230;</span><span class="hint">Ich mag meine Klasse, weil&#8230;</span><span class="hint">In der Klasse&#8230;</span></div>
+  <textarea placeholder="Meine Mitsch&#252;ler sind &#8230; weil &#8230;"></textarea>
+</div>
+
+<div style="margin-top:0.8rem;">
+  <button class="actbtn" onclick="showScore()">Ergebnisse zeigen &#127919;</button>
+  <button class="resetbtn" onclick="resetQ()">Neustart</button>
+</div>
+</div>
+
+<script>
+let done={},correct=0,total=8;
+function tab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.add('on');
+  const idx={bd:0,vocab:1,quiz:2}[n];
+  document.querySelectorAll('.tab')[idx].classList.add('on');
+}
+function ans(btn,q,ok){
+  if(done[q])return; done[q]=true;
+  const card=document.getElementById('q'+q);
+  const fb=document.getElementById('fb'+q);
+  card.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('right');fb.textContent='Richtig! Sehr gut!';fb.className='fb ok';card.classList.add('ok');correct++;}
+  else{btn.classList.add('wrong');card.classList.add('ko');card.querySelectorAll('.opt').forEach(b=>{if(b.onclick.toString().includes('true'))b.classList.add('showok');});fb.textContent=['Nicht ganz... Lies nochmal!','Fast! Schau die BD nochmal an.','Noch einmal versuchen!'][Math.floor(Math.random()*3)];fb.className='fb ko';}
+  const d=Object.keys(done).length;
+  document.getElementById('snum').textContent=correct+'/'+d;
+  document.getElementById('sdisplay').classList.add('on');
+}
+function showScore(){
+  const d=Object.keys(done).length;
+  let s=correct+'/'+total;
+  if(d<total)s+=' (noch '+(total-d)+' Fragen offen!)';
+  else s+=correct>=7?' Ausgezeichnet!':correct>=5?' Gut gemacht!':' Weiter ueben!';
+  document.getElementById('snum').textContent=s;
+  document.getElementById('sdisplay').classList.add('on');
+  document.getElementById('sdisplay').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQ(){
+  done={};correct=0;
+  document.getElementById('sdisplay').classList.remove('on');
+  for(let i=1;i<=8;i++){const c=document.getElementById('q'+i);if(!c)continue;c.classList.remove('ok','ko');document.getElementById('fb'+i).className='fb';c.querySelectorAll('.opt').forEach(b=>{b.disabled=false;b.className='opt';});}
+  document.querySelectorAll('textarea').forEach(t=>t.value='');
+}
+</script>

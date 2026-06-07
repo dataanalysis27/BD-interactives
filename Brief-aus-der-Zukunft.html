@@ -1,0 +1,909 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0f;font-family:'Comic Neue',cursive;color:#eee;padding:1.2rem;}
+.logo{font-family:'Bangers',cursive;font-size:2.4rem;letter-spacing:3px;color:#fff;text-shadow:4px 4px 0 #7B3F00,7px 7px 0 #3a1800;line-height:1;text-align:center;}
+.sub{font-size:0.75rem;color:#FAC775;letter-spacing:3px;margin-top:4px;text-align:center;}
+.brow{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+.bdg{background:#3a1800;color:#FAC775;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #7B3F00;}
+.tabs{display:flex;border-bottom:2px solid #7B3F00;margin:1rem 0;}
+.tab{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:8px 18px;background:transparent;color:#888;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.tab.on{color:#fff;border-bottom:3px solid #FAC775;}
+.panel{display:none;}.panel.on{display:block;}
+.grid{display:grid;gap:3px;background:#000;border:3px solid #222;border-radius:4px;overflow:hidden;margin-bottom:3px;}
+.g2{grid-template-columns:1fr 1fr;}.g1{grid-template-columns:1fr;}.g21{grid-template-columns:2fr 1fr;}
+.cell{position:relative;overflow:hidden;}
+.cell svg{display:block;width:100%;height:100%;position:absolute;inset:0;}
+.pnum{position:absolute;top:5px;left:5px;width:20px;height:20px;background:#7B3F00;color:#fff;border-radius:50%;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:30;border:2px solid #fff;}
+.bub{position:absolute;z-index:20;}
+.bi{background:#fff;border:2px solid #111;border-radius:14px;padding:6px 10px;font-family:'Comic Neue',cursive;font-size:0.72rem;font-weight:700;color:#111;line-height:1.4;max-width:160px;text-align:center;}
+.bi.warm{background:#FAEEDA;border-color:#7B3F00;color:#3a1800;}
+.bi.mystery{background:#1a0a2e;border-color:#9b59b6;color:#d7b4f5;font-size:0.75rem;}
+.bi.shout{background:#fff3cd;border-color:#c0392b;border-width:2.5px;color:#7B241C;}
+.bi.happy{background:#E1F5EE;border-color:#1D9E75;color:#085041;}
+.bi.future{background:#0d1a3e;border-color:#4fc3f7;color:#7BC8F5;}
+.bt{width:0;height:0;}
+.bt.dl{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #111;margin-left:18px;}
+.bt.dr{border-left:4px solid transparent;border-right:8px solid transparent;border-top:10px solid #111;margin-left:auto;margin-right:18px;}
+.bt.dl-w{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #7B3F00;margin-left:18px;}
+.bt.dl-h{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #1D9E75;margin-left:18px;}
+.bt.dr-f{border-left:4px solid transparent;border-right:8px solid transparent;border-top:10px solid #4fc3f7;margin-left:auto;margin-right:18px;}
+.cap{position:absolute;bottom:0;left:0;right:0;background:#3a1800;color:#FAC775;font-family:'Comic Neue',cursive;font-size:0.68rem;font-weight:700;padding:4px 8px;border-top:2px solid #7B3F00;font-style:italic;}
+.cap.mystery{background:#1a0a2e;color:#d7b4f5;border-top-color:#9b59b6;}
+.cap.future{background:#0a0a2e;color:#7BC8F5;border-top-color:#4fc3f7;}
+.cap.green{background:#085041;color:#9FE1CB;border-top-color:#1D9E75;}
+.cap.top{top:0;bottom:auto;border-top:none;border-bottom:2px solid #7B3F00;}
+.sfx{position:absolute;font-family:'Bangers',cursive;z-index:15;pointer-events:none;}
+.qcard{background:#111;border:1.5px solid #7B3F00;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.qcard.ok{border-color:#1D9E75;background:#04342C22;}
+.qcard.ko{border-color:#993C1D;background:#4A1B0C22;}
+.qtxt{font-size:0.88rem;font-weight:700;color:#eee;margin-bottom:0.7rem;display:flex;align-items:flex-start;gap:8px;}
+.qn{display:inline-flex;align-items:center;justify-content:center;background:#7B3F00;color:#fff;border-radius:50%;width:24px;height:24px;font-size:0.75rem;font-weight:700;flex-shrink:0;}
+.qn.green{background:#1D9E75;}
+.opts{display:flex;flex-direction:column;gap:5px;}
+.opt{font-family:'Comic Neue',cursive;font-size:0.82rem;font-weight:700;text-align:left;padding:7px 12px;border-radius:7px;border:1.5px solid #7B3F00;background:#1a0a00;color:#ddd;cursor:pointer;transition:all .12s;}
+.opt:hover:not(:disabled){background:#3a1800;border-color:#FAC775;}
+.opt.right{background:#04342C;border-color:#1D9E75;color:#9FE1CB;}
+.opt.wrong{background:#4A1B0C;border-color:#993C1D;color:#F5C4B3;}
+.opt.showok{background:#085041;border-color:#1D9E75;color:#9FE1CB;opacity:.7;}
+.fb{font-size:0.78rem;font-weight:700;padding:5px 8px;border-radius:5px;margin-top:6px;display:none;}
+.fb.ok{background:#085041;color:#9FE1CB;display:block;}
+.fb.ko{background:#712B13;color:#F5C4B3;display:block;}
+.openq{background:#111;border:1.5px solid #7B3F00;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.openq textarea{width:100%;min-height:65px;background:#0a0a0f;border:1.5px solid #7B3F00;border-radius:6px;padding:8px;font-family:'Comic Neue',cursive;font-size:0.82rem;color:#eee;resize:vertical;margin-top:6px;}
+.hint{display:inline-block;background:#3a1800;color:#FAC775;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:8px;margin:2px;}
+.scorebox{background:#111;border:2px solid #7B3F00;border-radius:10px;padding:1rem;text-align:center;margin-bottom:1rem;display:none;}
+.scorebox.on{display:block;}
+.scorenum{font-family:'Bangers',cursive;font-size:2.8rem;color:#FAC775;letter-spacing:2px;}
+.actbtn{font-family:'Bangers',cursive;letter-spacing:1px;font-size:1rem;padding:9px 22px;border-radius:20px;background:#7B3F00;color:#fff;border:none;cursor:pointer;margin-top:0.5rem;transition:transform .1s;}
+.actbtn:hover{transform:scale(1.04);}
+.actbtn.green{background:#1D9E75;margin-left:8px;}
+.resetbtn{font-family:'Comic Neue',cursive;font-size:0.82rem;padding:7px 18px;border-radius:20px;background:transparent;color:#7B3F00;border:2px solid #7B3F00;cursor:pointer;margin-left:8px;}
+.vc{background:#111;border:1.5px solid #7B3F00;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.vt{font-family:'Bangers',cursive;font-size:1.2rem;color:#FAC775;letter-spacing:1px;margin-bottom:0.6rem;}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;}
+.vi{display:flex;gap:6px;font-size:0.8rem;padding:4px 0;border-bottom:1px solid #3a1800;align-items:baseline;}
+.vde{font-weight:700;color:#FAC775;min-width:110px;}
+.vfr{color:#666;}
+</style>
+
+<div class="logo">BRIEF AUS DER ZUKUNFT</div>
+<div class="sub">ein zeitreise-manga auf deutsch</div>
+<div class="brow">
+  <span class="bdg">A1&#8211;A2</span><span class="bdg">10VP &#183; Vaud</span><span class="bdg">Mystère &amp; Zeitreise</span>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="tab('bd')">manga lesen</button>
+  <button class="tab" onclick="tab('vocab')">vokabeln</button>
+  <button class="tab" onclick="tab('quiz')">quiz</button>
+</div>
+
+<div id="tab-bd" class="panel on">
+
+<!-- ROW 1: Briefkasten + Brief lesen -->
+<div class="grid g2">
+
+<!-- P1: Max findet den Brief -->
+<div class="cell" style="min-height:280px;background:#1a1208;">
+  <div class="pnum">1</div>
+  <div class="cap top">Montag. Max geht zur Schule.</div>
+  <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="280" fill="#1a1208"/>
+    <!-- morning sky -->
+    <rect width="320" height="140" fill="#1e2a3a"/>
+    <!-- early morning glow -->
+    <ellipse cx="300" cy="80" rx="50" ry="30" fill="#FFD700" opacity=".08"/>
+    <ellipse cx="300" cy="80" rx="30" ry="18" fill="#FFD700" opacity=".1"/>
+    <!-- street -->
+    <rect x="0" y="200" width="320" height="80" fill="#2a2010"/>
+    <rect x="0" y="196" width="320" height="6" fill="#1a1510"/>
+    <!-- pavement edge -->
+    <rect x="0" y="192" width="320" height="6" fill="#3a3020"/>
+    <!-- buildings in bg -->
+    <rect x="0" y="80" width="60" height="120" fill="#1a2030" opacity=".8"/>
+    <rect x="5" y="90" width="12" height="10" fill="#FFD700" opacity=".2"/>
+    <rect x="22" y="90" width="12" height="10" fill="#4fc3f7" opacity=".15"/>
+    <rect x="220" y="60" width="100" height="140" fill="#1a2030" opacity=".8"/>
+    <rect x="230" y="75" width="15" height="12" fill="#FFD700" opacity=".25"/>
+    <rect x="252" y="75" width="15" height="12" fill="#4fc3f7" opacity=".2"/>
+    <rect x="275" y="75" width="15" height="12" fill="#FFD700" opacity=".15"/>
+    <!-- trees -->
+    <rect x="90" y="148" width="8" height="52" fill="#2a1a08"/>
+    <ellipse cx="94" cy="138" rx="20" ry="22" fill="#1a3a10"/>
+    <rect x="160" y="155" width="7" height="45" fill="#2a1a08"/>
+    <ellipse cx="163" cy="145" rx="18" ry="20" fill="#1a3a10"/>
+    <!-- LETTERBOX — mysterious, old-style -->
+    <rect x="55" y="160" width="12" height="40" fill="#3a2a10" rx="2"/>
+    <rect x="48" y="150" width="26" height="36" fill="#5a3a10" rx="3" stroke="#7B3F00" stroke-width="1.5"/>
+    <rect x="52" y="158" width="18" height="4" fill="#3a1800" rx="1"/>
+    <!-- glowing envelope sticking out -->
+    <rect x="51" y="142" width="22" height="16" fill="#f5e6c8" rx="2" stroke="#BA7517" stroke-width="1.5"/>
+    <line x1="51" y1="142" x2="62" y2="150" stroke="#BA7517" stroke-width="1" opacity=".5"/>
+    <line x1="73" y1="142" x2="62" y2="150" stroke="#BA7517" stroke-width="1" opacity=".5"/>
+    <!-- purple glow on envelope — mysterious -->
+    <ellipse cx="62" cy="148" rx="18" ry="12" fill="#9b59b6" opacity=".12"/>
+    <!-- MAX walking, notices envelope -->
+    <!-- body -->
+    <path d="M 148 185 Q 146 210 148 230 Q 150 240 163 244 Q 175 248 186 242 Q 195 234 193 218 Q 191 198 188 185 Z" fill="#2c4a6e"/>
+    <!-- school bag strap -->
+    <path d="M 148 190 Q 135 200 130 220" stroke="#1a3a5e" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="122" y="195" width="20" height="28" fill="#8B2500" rx="4"/>
+    <!-- arms — one pointing at letterbox -->
+    <path d="M 148 200 Q 128 195 108 188 Q 95 184 88 182" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <ellipse cx="86" cy="181" rx="8" ry="6" fill="#d4956a"/>
+    <!-- other arm natural -->
+    <path d="M 188 200 Q 200 205 208 215" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <!-- legs walking -->
+    <path d="M 155 240 Q 148 255 145 268" stroke="#1e3050" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M 178 242 Q 184 256 188 268" stroke="#1e3050" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <!-- shoes -->
+    <ellipse cx="145" cy="269" rx="11" ry="5" fill="#111"/>
+    <ellipse cx="189" cy="269" rx="11" ry="5" fill="#111"/>
+    <!-- NECK -->
+    <rect x="158" y="167" width="18" height="20" fill="#d4956a" rx="3"/>
+    <!-- HEAD realistic -->
+    <ellipse cx="167" cy="147" rx="30" ry="33" fill="#d4956a"/>
+    <path d="M 139 155 Q 137 172 150 181 Q 167 188 184 181 Q 197 172 195 155" fill="#d4956a"/>
+    <ellipse cx="138" cy="150" rx="6" ry="8" fill="#c8845a"/>
+    <ellipse cx="140" cy="150" rx="3.5" ry="5.5" fill="#d4956a"/>
+    <!-- hair -->
+    <path d="M 139 130 Q 137 112 150 105 Q 167 98 184 105 Q 197 112 195 130 Q 191 119 183 116 Q 167 111 152 116 Q 142 120 139 130 Z" fill="#2a1a08"/>
+    <path d="M 139 130 Q 134 140 136 152 Q 139 147 140 139 Z" fill="#231508"/>
+    <path d="M 195 130 Q 200 140 198 150 Q 195 146 194 138 Z" fill="#2a1a08"/>
+    <!-- EYES — wide, surprised, staring at envelope -->
+    <ellipse cx="156" cy="147" rx="9" ry="9" fill="#f0ece4"/>
+    <ellipse cx="178" cy="147" rx="9" ry="9" fill="#f0ece4"/>
+    <circle cx="157" cy="147" r="6" fill="#5a3a18"/>
+    <circle cx="179" cy="147" r="6" fill="#5a3a18"/>
+    <circle cx="157" cy="147" r="3.8" fill="#2a1a08"/>
+    <circle cx="179" cy="147" r="3.8" fill="#2a1a08"/>
+    <circle cx="159" cy="145" r="2" fill="#fff" opacity=".9"/>
+    <circle cx="181" cy="145" r="2" fill="#fff" opacity=".9"/>
+    <!-- eyebrows raised -->
+    <path d="M 147 137 Q 156 132 165 136" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <path d="M 169 136 Q 178 132 187 137" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <!-- nose -->
+    <path d="M 163 153 Q 161 160 158 163 Q 163 166 167 166 Q 171 166 176 163 Q 173 160 171 153 Z" fill="#c8845a" opacity=".4"/>
+    <!-- mouth open in surprise -->
+    <path d="M 158 174 Q 167 179 176 174 Q 170 185 167 186 Q 164 185 158 174 Z" fill="#8B0000" opacity=".6"/>
+    <path d="M 160 175 Q 167 180 174 175" stroke="#9a5530" stroke-width="1.5" fill="none"/>
+    <!-- question marks above head -->
+    <text x="200" y="125" font-family="Bangers,sans-serif" font-size="22" fill="#9b59b6" opacity=".8">?</text>
+    <text x="215" y="108" font-family="Bangers,sans-serif" font-size="16" fill="#FAC775" opacity=".7">?</text>
+  </svg>
+  <div class="bub" style="top:28px;right:8px;">
+    <div class="bi warm" style="max-width:140px;font-size:0.7rem;">Was ist das? Ein Brief&#8230; f&#252;r mich?</div>
+    <div class="bt dr" style="border-top-color:#7B3F00;"></div>
+  </div>
+</div>
+
+<!-- P2: Brief lesen — dramatic close up -->
+<div class="cell" style="min-height:280px;background:#f5ead0;">
+  <div class="pnum">2</div>
+  <svg viewBox="0 0 320 280" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="280" fill="#f5ead0"/>
+    <!-- aged paper texture background -->
+    <rect width="320" height="280" fill="#f0dfa8" opacity=".4"/>
+    <!-- THE LETTER — big, dramatic -->
+    <rect x="30" y="25" width="260" height="200" fill="#fef8e8" rx="6" stroke="#BA7517" stroke-width="2"/>
+    <!-- paper fold lines -->
+    <line x1="30" y1="116" x2="290" y2="116" stroke="#d4a870" stroke-width="0.8" opacity=".5"/>
+    <line x1="30" y1="140" x2="290" y2="140" stroke="#d4a870" stroke-width="0.8" opacity=".5"/>
+    <!-- wax seal remnant top -->
+    <circle cx="160" cy="38" r="14" fill="#9b59b6" opacity=".8"/>
+    <text x="160" y="43" text-anchor="middle" font-family="serif" font-size="12" fill="#fff" font-weight="bold">M</text>
+    <!-- letter content — handwritten style -->
+    <text x="55" y="75" font-family="Comic Neue,cursive" font-size="10" fill="#3a2a08" font-weight="bold">Lieber Max,</text>
+    <text x="55" y="92" font-family="Comic Neue,cursive" font-size="8.5" fill="#3a2a08">Ich bin du &#8212; aus der Zukunft.</text>
+    <text x="55" y="107" font-family="Comic Neue,cursive" font-size="8.5" fill="#3a2a08">Du brauchst meine Hilfe.</text>
+    <text x="55" y="124" font-family="Comic Neue,cursive" font-size="8.5" fill="#3a2a08">Geh heute Nachmittag in die</text>
+    <text x="55" y="139" font-family="Comic Neue,cursive" font-size="8.5" fill="#3a2a08">Bibliothek. Schrank Nr. 7.</text>
+    <text x="55" y="156" font-family="Comic Neue,cursive" font-size="8.5" fill="#3a2a08">Bitte. Es ist sehr wichtig.</text>
+    <!-- faded line -->
+    <text x="55" y="174" font-family="Comic Neue,cursive" font-size="7.5" fill="#9a7a40" font-style="italic">&#8212; Max (30 Jahre alt)</text>
+    <!-- mysterious symbol at bottom -->
+    <text x="160" y="210" text-anchor="middle" font-family="serif" font-size="22" fill="#9b59b6" opacity=".6">&#8734;</text>
+    <!-- hands holding letter — partial, realistic -->
+    <path d="M 30 220 Q 20 240 25 260 Q 50 268 80 262 Q 100 258 110 245 Q 105 230 90 225 Z" fill="#d4956a"/>
+    <path d="M 290 220 Q 300 240 295 260 Q 270 268 240 262 Q 220 258 210 245 Q 215 230 230 225 Z" fill="#d4956a"/>
+    <!-- fingers detail left -->
+    <path d="M 35 228 Q 28 238 30 248" stroke="#c8845a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 50 222 Q 44 232 46 242" stroke="#c8845a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 65 220 Q 60 230 62 240" stroke="#c8845a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- fingers detail right -->
+    <path d="M 285 228 Q 292 238 290 248" stroke="#c8845a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 270 222 Q 276 232 274 242" stroke="#c8845a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 255 220 Q 260 230 258 240" stroke="#c8845a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- MAX eyes peeking over letter top — wide shocked -->
+    <ellipse cx="120" cy="50" rx="12" ry="11" fill="#f0ece4"/>
+    <ellipse cx="148" cy="48" rx="12" ry="11" fill="#f0ece4"/>
+    <circle cx="122" cy="50" r="8" fill="#5a3a18"/>
+    <circle cx="150" cy="48" r="8" fill="#5a3a18"/>
+    <circle cx="122" cy="50" r="5" fill="#2a1a08"/>
+    <circle cx="150" cy="48" r="5" fill="#2a1a08"/>
+    <ellipse cx="125" cy="47" rx="3" ry="3.5" fill="#fff" opacity=".9"/>
+    <ellipse cx="153" cy="45" rx="3" ry="3.5" fill="#fff" opacity=".9"/>
+    <!-- hair above eyes -->
+    <path d="M 108 42 Q 110 32 125 28 Q 150 22 168 30 Q 176 36 174 44 Q 170 36 160 33 Q 142 28 124 33 Q 112 37 110 44 Z" fill="#2a1a08"/>
+    <!-- eyebrows arched high -->
+    <path d="M 110 40 Q 121 34 132 38" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <path d="M 138 36 Q 149 30 160 34" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+  </svg>
+  <div class="bub" style="bottom:28px;left:50%;transform:translateX(-50%);">
+    <div class="bi shout" style="white-space:nowrap;font-size:0.82rem;">Ich&#8230; aus der Zukunft?! Das ist verrückt!!</div>
+  </div>
+  <div class="cap">Max liest den Brief. Er versteht nicht alles.</div>
+</div>
+
+</div>
+
+<!-- ROW 2: Bibliothek — full width dramatic -->
+<div class="grid g1">
+<div class="cell" style="min-height:240px;background:#0d0d18;">
+  <div class="pnum">3</div>
+  <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg">
+    <rect width="640" height="240" fill="#0d0d18"/>
+    <!-- library atmosphere — dark, atmospheric -->
+    <rect width="640" height="90" fill="#0a0a14"/>
+    <!-- high bookshelves -->
+    <rect x="0" y="0" width="25" height="200" fill="#2a1a08" stroke="#3a2a10" stroke-width="1"/>
+    <rect x="615" y="0" width="25" height="200" fill="#2a1a08" stroke="#3a2a10" stroke-width="1"/>
+    <!-- book spines left shelf -->
+    <rect x="2" y="5" width="21" height="14" fill="#8B2500" rx="1"/>
+    <rect x="2" y="22" width="21" height="14" fill="#1a3a5e" rx="1"/>
+    <rect x="2" y="39" width="21" height="14" fill="#2d5a1a" rx="1"/>
+    <rect x="2" y="56" width="21" height="14" fill="#6a0a6a" rx="1"/>
+    <rect x="2" y="73" width="21" height="14" fill="#7B3F00" rx="1"/>
+    <!-- book spines right shelf -->
+    <rect x="617" y="5" width="21" height="14" fill="#1a3a5e" rx="1"/>
+    <rect x="617" y="22" width="21" height="14" fill="#8B2500" rx="1"/>
+    <rect x="617" y="39" width="21" height="14" fill="#6a0a6a" rx="1"/>
+    <rect x="617" y="56" width="21" height="14" fill="#2d5a1a" rx="1"/>
+    <!-- middle shelves -->
+    <rect x="100" y="0" width="20" height="200" fill="#2a1a08" stroke="#3a2a10" stroke-width="1"/>
+    <rect x="520" y="0" width="20" height="200" fill="#2a1a08" stroke="#3a2a10" stroke-width="1"/>
+    <!-- book spines middle shelves -->
+    <rect x="102" y="8" width="16" height="12" fill="#534AB7" rx="1"/>
+    <rect x="102" y="23" width="16" height="12" fill="#1D9E75" rx="1"/>
+    <rect x="102" y="38" width="16" height="12" fill="#c0392b" rx="1"/>
+    <rect x="102" y="53" width="16" height="12" fill="#FFD700" rx="1" opacity=".7"/>
+    <rect x="522" y="8" width="16" height="12" fill="#c0392b" rx="1"/>
+    <rect x="522" y="23" width="16" height="12" fill="#534AB7" rx="1"/>
+    <rect x="522" y="38" width="16" height="12" fill="#FFD700" rx="1" opacity=".7"/>
+    <!-- CABINET No. 7 — glowing mysteriously -->
+    <rect x="270" y="20" width="100" height="160" fill="#1a1208" rx="4" stroke="#BA7517" stroke-width="2"/>
+    <rect x="274" y="24" width="92" height="152" fill="#0d0a04" rx="2"/>
+    <!-- cabinet glow — purple emanating -->
+    <ellipse cx="320" cy="105" rx="80" ry="90" fill="#9b59b6" opacity=".06"/>
+    <ellipse cx="320" cy="105" rx="55" ry="65" fill="#9b59b6" opacity=".08"/>
+    <!-- number 7 on cabinet -->
+    <text x="320" y="100" text-anchor="middle" font-family="Bangers,sans-serif" font-size="55" fill="#9b59b6" opacity=".3">7</text>
+    <!-- lock on cabinet -->
+    <rect x="310" y="108" width="20" height="16" fill="#5a4010" rx="3" stroke="#7B3F00" stroke-width="1.5"/>
+    <circle cx="320" cy="112" r="4" fill="#BA7517"/>
+    <!-- handle -->
+    <rect x="318" y="118" width="4" height="6" fill="#7B3F00" rx="1"/>
+    <!-- dusty light beam from above onto cabinet -->
+    <polygon points="280,0 360,0 340,180 300,180" fill="#FFD700" opacity=".03"/>
+    <!-- dust particles -->
+    <circle cx="305" cy="40" r="1.5" fill="#FAC775" opacity=".4"/>
+    <circle cx="335" cy="60" r="1" fill="#FAC775" opacity=".3"/>
+    <circle cx="315" cy="80" r="1.5" fill="#FAC775" opacity=".35"/>
+    <circle cx="328" cy="30" r="1" fill="#FAC775" opacity=".25"/>
+    <!-- floor -->
+    <rect x="0" y="195" width="640" height="45" fill="#1a1008"/>
+    <line x1="0" y1="195" x2="640" y2="195" stroke="#2a1a08" stroke-width="1"/>
+    <!-- MAX approaching from left — cautious, tense -->
+    <!-- body -->
+    <path d="M 155 145 Q 153 165 155 182 Q 157 192 168 196 Q 180 200 192 194 Q 200 186 198 170 Q 196 152 193 145 Z" fill="#2c4a6e"/>
+    <!-- arm reaching forward toward cabinet -->
+    <path d="M 193 158 Q 215 152 235 148 Q 248 146 255 148" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <ellipse cx="257" cy="149" rx="7" ry="6" fill="#d4956a"/>
+    <!-- other arm back, tense -->
+    <path d="M 155 160 Q 140 165 128 170" stroke="#d4956a" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- legs cautious step -->
+    <path d="M 163 192 Q 157 207 154 220" stroke="#1e3050" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M 183 194 Q 188 208 190 220" stroke="#1e3050" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <ellipse cx="153" cy="221" rx="10" ry="4" fill="#111"/>
+    <ellipse cx="191" cy="221" rx="10" ry="4" fill="#111"/>
+    <!-- neck -->
+    <rect x="165" y="127" width="17" height="20" fill="#d4956a" rx="3"/>
+    <!-- HEAD — profile/3/4 view looking at cabinet -->
+    <ellipse cx="175" cy="108" rx="28" ry="31" fill="#d4956a"/>
+    <path d="M 149 116 Q 147 132 158 141 Q 173 148 188 141 Q 200 132 198 116" fill="#d4956a"/>
+    <ellipse cx="148" cy="112" rx="5" ry="7" fill="#c8845a"/>
+    <!-- hair -->
+    <path d="M 149 95 Q 147 78 160 71 Q 175 65 190 71 Q 202 78 200 95 Q 197 84 189 82 Q 175 77 162 82 Q 152 86 149 95 Z" fill="#2a1a08"/>
+    <path d="M 149 95 Q 144 104 146 115 Q 149 110 150 102 Z" fill="#231508"/>
+    <!-- eye looking forward intently -->
+    <ellipse cx="163" cy="108" rx="8" ry="8" fill="#f0ece4"/>
+    <ellipse cx="183" cy="108" rx="8" ry="8" fill="#f0ece4"/>
+    <circle cx="165" cy="108" r="5.5" fill="#5a3a18"/>
+    <circle cx="185" cy="108" r="5.5" fill="#5a3a18"/>
+    <circle cx="165" cy="108" r="3.5" fill="#2a1a08"/>
+    <circle cx="185" cy="108" r="3.5" fill="#2a1a08"/>
+    <circle cx="167" cy="106" r="1.8" fill="#fff" opacity=".9"/>
+    <circle cx="187" cy="106" r="1.8" fill="#fff" opacity=".9"/>
+    <!-- tense brows -->
+    <path d="M 155 98 Q 163 93 171 97" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <path d="M 175 97 Q 183 93 191 98" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <!-- mouth firm -->
+    <path d="M 163 120 Q 173 122 183 120" stroke="#9a5530" stroke-width="2" fill="none"/>
+  </svg>
+  <div class="bub" style="top:10px;left:50%;transform:translateX(-50%);">
+    <div class="bi warm" style="font-size:0.78rem;white-space:nowrap;">Schrank Nummer 7&#8230; Hier ist er!</div>
+  </div>
+  <div class="sfx" style="right:20px;top:20px;font-size:1.1rem;color:#9b59b6;transform:rotate(10deg);">&#10022;&#10022;</div>
+  <div class="cap mystery">Die Bibliothek. Es ist still. Max sucht Schrank Nummer 7.</div>
+</div>
+</div>
+
+<!-- ROW 3: Schrank öffnen + MAX AUS DER ZUKUNFT -->
+<div class="grid g2">
+
+<!-- P4: Der Schrank öffnet sich — Licht -->
+<div class="cell" style="min-height:260px;background:#0d0d18;">
+  <div class="pnum">4</div>
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="260" fill="#0d0d18"/>
+    <!-- cabinet open — blinding purple-white light -->
+    <rect x="80" y="20" width="160" height="200" fill="#0a0804" rx="4" stroke="#BA7517" stroke-width="2"/>
+    <!-- door swinging open -->
+    <rect x="80" y="20" width="80" height="200" fill="#2a1a08" rx="4" stroke="#7B3F00" stroke-width="1.5" transform="rotate(-35 80 20)"/>
+    <!-- LIGHT EXPLOSION from inside -->
+    <ellipse cx="200" cy="120" rx="100" ry="110" fill="#9b59b6" opacity=".15"/>
+    <ellipse cx="200" cy="120" rx="70" ry="80" fill="#9b59b6" opacity=".18"/>
+    <ellipse cx="200" cy="120" rx="45" ry="55" fill="#d7b4f5" opacity=".2"/>
+    <ellipse cx="200" cy="120" rx="25" ry="32" fill="#fff" opacity=".25"/>
+    <!-- light rays -->
+    <g opacity=".2">
+      <line x1="200" y1="120" x2="50" y2="0" stroke="#d7b4f5" stroke-width="3"/>
+      <line x1="200" y1="120" x2="150" y2="0" stroke="#9b59b6" stroke-width="2"/>
+      <line x1="200" y1="120" x2="250" y2="0" stroke="#d7b4f5" stroke-width="2"/>
+      <line x1="200" y1="120" x2="320" y2="0" stroke="#9b59b6" stroke-width="3"/>
+      <line x1="200" y1="120" x2="320" y2="80" stroke="#d7b4f5" stroke-width="2"/>
+      <line x1="200" y1="120" x2="320" y2="180" stroke="#9b59b6" stroke-width="2"/>
+      <line x1="200" y1="120" x2="300" y2="260" stroke="#d7b4f5" stroke-width="2"/>
+      <line x1="200" y1="120" x2="180" y2="260" stroke="#9b59b6" stroke-width="2"/>
+    </g>
+    <!-- silhouette of future Max emerging from light -->
+    <!-- body silhouette -->
+    <path d="M 178 120 Q 175 140 177 160 Q 179 172 192 176 Q 205 180 218 174 Q 227 166 225 150 Q 223 132 220 120 Z" fill="#1a0a30" opacity=".7"/>
+    <!-- head silhouette — OLDER, broader shoulders -->
+    <ellipse cx="199" cy="100" rx="26" ry="28" fill="#1a0a30" opacity=".75"/>
+    <path d="M 175 108 Q 173 123 183 131 Q 199 138 215 131 Q 225 123 223 108" fill="#1a0a30" opacity=".75"/>
+    <!-- glowing outline effect -->
+    <ellipse cx="199" cy="100" rx="28" ry="30" fill="none" stroke="#d7b4f5" stroke-width="1.5" opacity=".5"/>
+    <!-- eyes glowing in silhouette -->
+    <ellipse cx="191" cy="100" rx="4" ry="4" fill="#9b59b6" opacity=".8"/>
+    <ellipse cx="207" cy="100" rx="4" ry="4" fill="#9b59b6" opacity=".8"/>
+    <!-- MAX reacting left side — backing away, stunned -->
+    <!-- body -->
+    <path d="M 20 175 Q 18 195 20 210 Q 22 218 32 222 Q 42 225 52 220 Q 59 212 57 198 Q 55 183 52 175 Z" fill="#2c4a6e"/>
+    <rect x="10" y="178" width="14" height="20" fill="#8B2500" rx="3"/>
+    <!-- neck -->
+    <rect x="31" y="158" width="14" height="18" fill="#d4956a" rx="3"/>
+    <!-- head backing away -->
+    <ellipse cx="38" cy="140" rx="24" ry="27" fill="#d4956a"/>
+    <path d="M 16 147 Q 14 162 24 170 Q 38 177 52 170 Q 62 162 60 147" fill="#d4956a"/>
+    <ellipse cx="15" cy="143" rx="5" ry="7" fill="#c8845a"/>
+    <!-- hair -->
+    <path d="M 16 126 Q 14 110 26 103 Q 38 97 50 103 Q 62 110 60 126 Q 57 116 50 113 Q 38 108 26 113 Q 18 118 16 126 Z" fill="#2a1a08"/>
+    <!-- shocked eyes wide -->
+    <ellipse cx="27" cy="140" rx="8" ry="8" fill="#f0ece4"/>
+    <ellipse cx="46" cy="140" rx="8" ry="8" fill="#f0ece4"/>
+    <circle cx="29" cy="140" r="6" fill="#5a3a18"/>
+    <circle cx="48" cy="140" r="6" fill="#5a3a18"/>
+    <circle cx="29" cy="140" r="3.8" fill="#2a1a08"/>
+    <circle cx="48" cy="140" r="3.8" fill="#2a1a08"/>
+    <ellipse cx="31" cy="137" rx="2.5" ry="3" fill="#fff" opacity=".9"/>
+    <ellipse cx="50" cy="137" rx="2.5" ry="3" fill="#fff" opacity=".9"/>
+    <!-- brows shocked up -->
+    <path d="M 19 130 Q 27 124 35 128" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <path d="M 38 128 Q 46 124 54 130" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <!-- open mouth -->
+    <ellipse cx="37" cy="154" rx="6" ry="8" fill="#8B0000" opacity=".7"/>
+    <path d="M 31 154 Q 37 158 43 154" stroke="#c0392b" stroke-width="1.5" fill="none"/>
+  </svg>
+  <div class="bub" style="top:8px;left:8px;">
+    <div class="bi shout" style="max-width:130px;font-size:0.7rem;">WAS?! Wer bist du?! Das ist unm&#246;glich!!</div>
+    <div class="bt dl"></div>
+  </div>
+  <div class="cap mystery">Der Schrank &#246;ffnet sich&#8230; Ein Licht erscheint!</div>
+</div>
+
+<!-- P5: MAX FUTUR speaks — realistic older Max -->
+<div class="cell" style="min-height:260px;background:#0a0820;">
+  <div class="pnum">5</div>
+  <svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="260" fill="#0a0820"/>
+    <!-- subtle purple glow bg -->
+    <ellipse cx="160" cy="130" rx="140" ry="120" fill="#9b59b6" opacity=".05"/>
+    <!-- FUTURE MAX — same features but older, 30 years old -->
+    <!-- body — older, different jacket -->
+    <path d="M 100 160 Q 98 185 100 205 Q 102 218 120 224 Q 155 232 190 224 Q 208 218 210 205 Q 212 185 210 160 Z" fill="#1a2a4e"/>
+    <!-- jacket details — collar -->
+    <path d="M 130 160 Q 150 168 170 160" stroke="#2a3a5e" stroke-width="3" fill="none"/>
+    <rect x="148" y="160" width="14" height="25" fill="#111" rx="2"/>
+    <!-- arms relaxed, hands forward, calm -->
+    <path d="M 100 175 Q 78 180 62 178 Q 52 176 48 180" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <path d="M 210 175 Q 232 180 248 178 Q 258 176 262 180" stroke="#d4956a" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <ellipse cx="46" cy="181" rx="9" ry="7" fill="#d4956a"/>
+    <ellipse cx="264" cy="181" rx="9" ry="7" fill="#d4956a"/>
+    <!-- legs -->
+    <path d="M 118 222 Q 112 238 108 252" stroke="#12203a" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M 182 222 Q 188 238 192 252" stroke="#12203a" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <ellipse cx="107" cy="253" rx="13" ry="5" fill="#0a0820"/>
+    <ellipse cx="193" cy="253" rx="13" ry="5" fill="#0a0820"/>
+    <!-- NECK -->
+    <rect x="147" y="138" width="18" height="24" fill="#d4956a" rx="3"/>
+    <!-- HEAD — SAME features as young Max but older — same bone structure, slight stubble, more defined jaw -->
+    <ellipse cx="156" cy="112" rx="32" ry="36" fill="#d4956a"/>
+    <path d="M 126 120 Q 124 140 138 150 Q 156 158 174 150 Q 188 140 186 120" fill="#d4956a"/>
+    <ellipse cx="125" cy="116" rx="6" ry="9" fill="#c8845a"/>
+    <ellipse cx="127" cy="116" rx="3.5" ry="6" fill="#d4956a"/>
+    <!-- SAME hair but slightly shorter, mature -->
+    <path d="M 126 95 Q 124 76 138 68 Q 156 61 174 68 Q 188 76 186 95 Q 182 83 174 80 Q 156 74 140 80 Q 130 85 126 95 Z" fill="#2a1a08"/>
+    <path d="M 126 95 Q 120 106 123 118 Q 126 112 127 104 Z" fill="#231508"/>
+    <path d="M 186 95 Q 192 106 189 118 Q 186 112 185 104 Z" fill="#2a1a08"/>
+    <!-- slight stubble — older -->
+    <path d="M 128 128 Q 156 140 184 128" stroke="#3a2010" stroke-width="1" fill="none" stroke-dasharray="2,2" opacity=".4"/>
+    <ellipse cx="140" cy="132" rx="8" ry="4" fill="#c07040" opacity=".15"/>
+    <ellipse cx="172" cy="132" rx="8" ry="4" fill="#c07040" opacity=".15"/>
+    <!-- EYES — SAME shape as young Max, but calmer, wiser -->
+    <ellipse cx="143" cy="112" rx="10" ry="10" fill="#f0ece4"/>
+    <ellipse cx="169" cy="112" rx="10" ry="10" fill="#f0ece4"/>
+    <circle cx="144" cy="112" r="7" fill="#5a3a18"/>
+    <circle cx="170" cy="112" r="7" fill="#5a3a18"/>
+    <circle cx="144" cy="112" r="4.5" fill="#2a1a08"/>
+    <circle cx="170" cy="112" r="4.5" fill="#2a1a08"/>
+    <!-- purple tint in eyes — from future -->
+    <circle cx="146" cy="110" r="2.2" fill="#d7b4f5" opacity=".6"/>
+    <circle cx="172" cy="110" r="2.2" fill="#d7b4f5" opacity=".6"/>
+    <!-- calm brows — same as young Max but less arched -->
+    <path d="M 133 101 Q 143 97 153 100" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <path d="M 159 100 Q 169 97 179 101" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <!-- slight smile wrinkle — 30 years old -->
+    <path d="M 129 118 Q 132 122 130 126" stroke="#c8845a" stroke-width="1" fill="none" opacity=".4"/>
+    <path d="M 182 118 Q 179 122 181 126" stroke="#c8845a" stroke-width="1" fill="none" opacity=".4"/>
+    <!-- calm slight smile -->
+    <path d="M 143 138 Q 156 145 169 138" stroke="#9a5530" stroke-width="2" fill="none"/>
+    <!-- nose same as young -->
+    <path d="M 152 118 Q 150 126 147 130 Q 152 133 156 133 Q 160 133 165 130 Q 162 126 160 118 Z" fill="#c8845a" opacity=".4"/>
+    <!-- name badge -->
+    <rect x="126" y="248" width="60" height="12" fill="#9b59b6" rx="3"/>
+    <text x="156" y="257" text-anchor="middle" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#fff">MAX (30 Jahre)</text>
+  </svg>
+  <div class="bub" style="top:10px;right:8px;">
+    <div class="bi future" style="max-width:155px;font-size:0.7rem;">Ich bin du&#8230; in 16 Jahren. Ich brauche deine Hilfe. H&#246;r mir zu!</div>
+    <div class="bt dr-f"></div>
+  </div>
+  <div class="cap future">Max aus der Zukunft spricht zu Max!</div>
+</div>
+
+</div>
+
+<!-- ROW 4: Das Problem + Lösung -->
+<div class="grid g1">
+<div class="cell" style="min-height:220px;background:#0f0f1a;">
+  <div class="pnum">6</div>
+  <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+    <rect width="640" height="220" fill="#0f0f1a"/>
+    <!-- split panel — left: future Max talking, right: young Max listening -->
+    <line x1="320" y1="0" x2="320" y2="220" stroke="#9b59b6" stroke-width="1.5" opacity=".4"/>
+    <!-- LEFT: future Max — serious face -->
+    <!-- body partial -->
+    <path d="M 115 140 Q 113 165 115 182 Q 117 192 130 196 Q 155 202 180 194 Q 192 186 190 168 Q 188 148 185 140 Z" fill="#1a2a4e"/>
+    <rect x="148" y="140" width="12" height="22" fill="#111" rx="2"/>
+    <path d="M 115 152 Q 98 158 85 155 Q 76 153 72 157" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 185 152 Q 202 158 215 155 Q 224 153 228 157" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <!-- neck -->
+    <rect x="147" y="122" width="16" height="20" fill="#d4956a" rx="3"/>
+    <!-- head future max -->
+    <ellipse cx="155" cy="103" rx="28" ry="31" fill="#d4956a"/>
+    <path d="M 129 111 Q 127 127 138 135 Q 155 142 172 135 Q 183 127 181 111" fill="#d4956a"/>
+    <ellipse cx="128" cy="106" rx="5" ry="7" fill="#c8845a"/>
+    <path d="M 129 88 Q 127 72 140 65 Q 155 59 170 65 Q 183 72 181 88 Q 178 78 170 75 Q 155 70 141 75 Q 131 80 129 88 Z" fill="#2a1a08"/>
+    <path d="M 129 88 Q 124 98 126 109 Q 129 104 130 96 Z" fill="#231508"/>
+    <!-- eyes serious -->
+    <ellipse cx="143" cy="103" rx="9" ry="8" fill="#f0ece4"/>
+    <ellipse cx="167" cy="103" rx="9" ry="8" fill="#f0ece4"/>
+    <circle cx="144" cy="103" r="6" fill="#5a3a18"/>
+    <circle cx="168" cy="103" r="6" fill="#5a3a18"/>
+    <circle cx="144" cy="103" r="3.8" fill="#2a1a08"/>
+    <circle cx="168" cy="103" r="3.8" fill="#2a1a08"/>
+    <circle cx="146" cy="101" r="2" fill="#d7b4f5" opacity=".6"/>
+    <circle cx="170" cy="101" r="2" fill="#d7b4f5" opacity=".6"/>
+    <!-- serious brows -->
+    <path d="M 134 93 Q 143 89 152 92" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <path d="M 158 92 Q 167 89 176 93" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <!-- mouth speaking -->
+    <path d="M 144 118 Q 155 122 166 118" stroke="#9a5530" stroke-width="2" fill="none"/>
+    <!-- stubble -->
+    <ellipse cx="140" cy="122" rx="7" ry="3" fill="#c07040" opacity=".12"/>
+    <ellipse cx="170" cy="122" rx="7" ry="3" fill="#c07040" opacity=".12"/>
+    <!-- RIGHT: young Max listening intently -->
+    <path d="M 440 145 Q 438 170 440 188 Q 442 198 455 202 Q 475 207 495 200 Q 506 192 504 175 Q 502 156 499 145 Z" fill="#2c4a6e"/>
+    <rect x="127" y="178" width="14" height="22" fill="#8B2500" rx="3" transform="translate(330,0)"/>
+    <path d="M 499 158 Q 516 163 530 160 Q 540 158 544 162" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M 440 158 Q 422 162 408 160 Q 398 158 394 162" stroke="#d4956a" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- neck -->
+    <rect x="462" y="127" width="16" height="20" fill="#d4956a" rx="3"/>
+    <!-- head young max right side — listening, slightly forward -->
+    <ellipse cx="470" cy="108" rx="28" ry="31" fill="#d4956a"/>
+    <path d="M 444 116 Q 442 132 453 140 Q 470 147 487 140 Q 498 132 496 116" fill="#d4956a"/>
+    <ellipse cx="497" cy="111" rx="5" ry="7" fill="#c8845a"/>
+    <path d="M 444 93 Q 442 77 455 70 Q 470 64 485 70 Q 498 77 496 93 Q 493 83 485 80 Q 470 75 456 80 Q 446 85 444 93 Z" fill="#2a1a08"/>
+    <path d="M 496 93 Q 501 103 499 114 Q 496 109 495 101 Z" fill="#2a1a08"/>
+    <!-- eyes wide, hanging on every word -->
+    <ellipse cx="458" cy="108" rx="9" ry="9" fill="#f0ece4"/>
+    <ellipse cx="482" cy="108" rx="9" ry="9" fill="#f0ece4"/>
+    <circle cx="460" cy="108" r="6.5" fill="#5a3a18"/>
+    <circle cx="484" cy="108" r="6.5" fill="#5a3a18"/>
+    <circle cx="460" cy="108" r="4" fill="#2a1a08"/>
+    <circle cx="484" cy="108" r="4" fill="#2a1a08"/>
+    <circle cx="462" cy="106" r="2.2" fill="#fff" opacity=".9"/>
+    <circle cx="486" cy="106" r="2.2" fill="#fff" opacity=".9"/>
+    <path d="M 450 98 Q 458 93 466 97" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <path d="M 474 97 Q 482 93 490 98" stroke="#2a1a08" stroke-width="2" fill="none"/>
+    <!-- mouth slightly open, listening -->
+    <path d="M 460 124 Q 470 127 480 124" stroke="#9a5530" stroke-width="1.5" fill="none"/>
+    <!-- conversation arrow between them -->
+    <path d="M 230 100 Q 280 85 310 100" stroke="#9b59b6" stroke-width="1.5" fill="none" stroke-dasharray="5,3" opacity=".6"/>
+    <polygon points="310,94 322,100 310,106" fill="#9b59b6" opacity=".6"/>
+  </svg>
+  <div class="bub" style="top:8px;left:8px;">
+    <div class="bi future" style="max-width:155px;font-size:0.7rem;">In der Zukunft lernst du kein Deutsch. Dann verlierst du deinen Job. Du musst jetzt lernen!</div>
+    <div class="bt dl-h" style="border-top-color:#4fc3f7;"></div>
+  </div>
+  <div class="bub" style="top:8px;right:8px;">
+    <div class="bi warm" style="max-width:140px;font-size:0.7rem;">Ich&#8230; verliere meinen Job?! Weil ich kein Deutsch kann?!</div>
+    <div class="bt dr" style="border-top-color:#7B3F00;"></div>
+  </div>
+  <div class="cap mystery">Der ältere Max erklärt das Problem. Der jüngere Max hört zu.</div>
+</div>
+</div>
+
+<!-- ROW 5: Entschluss + Zurück in die Gegenwart -->
+<div class="grid g2">
+
+<!-- P7: Max beschliesst zu lernen -->
+<div class="cell" style="min-height:250px;background:#fff8f0;">
+  <div class="pnum">7</div>
+  <svg viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="250" fill="#fff8f0"/>
+    <!-- classroom warm light -->
+    <rect width="320" height="80" fill="#fef0e6"/>
+    <rect x="0" y="168" width="320" height="82" fill="#f5e6d0"/>
+    <line x1="0" y1="168" x2="320" y2="168" stroke="#d4a870" stroke-width="1.5"/>
+    <!-- desk with German textbook open -->
+    <rect x="30" y="145" width="260" height="12" fill="#c8a060" rx="3"/>
+    <!-- open textbook -->
+    <rect x="50" y="110" width="130" height="36" fill="#fef8e8" rx="3" stroke="#BA7517" stroke-width="1.5"/>
+    <line x1="115" y1="110" x2="115" y2="146" stroke="#BA7517" stroke-width="1" opacity=".4"/>
+    <text x="70" y="126" font-family="Comic Neue,cursive" font-size="7.5" fill="#3a2a08" font-weight="bold">Deutsch</text>
+    <text x="70" y="137" font-family="Comic Neue,cursive" font-size="6.5" fill="#5a4020">Lektion 4</text>
+    <text x="125" y="126" font-family="Comic Neue,cursive" font-size="6" fill="#3a2a08">ich lerne</text>
+    <text x="125" y="135" font-family="Comic Neue,cursive" font-size="6" fill="#3a2a08">du lernst</text>
+    <text x="125" y="144" font-family="Comic Neue,cursive" font-size="6" fill="#3a2a08">er/sie lernt</text>
+    <!-- pencil -->
+    <line x1="185" y1="118" x2="190" y2="145" stroke="#FAC775" stroke-width="4" stroke-linecap="round"/>
+    <line x1="190" y1="145" x2="191" y2="148" stroke="#d4956a" stroke-width="2.5"/>
+    <!-- notebook with notes -->
+    <rect x="200" y="115" width="88" height="32" fill="#fff" rx="2" stroke="#ddd" stroke-width="1"/>
+    <text x="210" y="127" font-family="Comic Neue,cursive" font-size="6" fill="#3a2a08">Ich muss lernen!</text>
+    <text x="210" y="137" font-family="Comic Neue,cursive" font-size="6" fill="#1D9E75">&#10004; Deutsch</text>
+    <text x="210" y="145" font-family="Comic Neue,cursive" font-size="6" fill="#1D9E75">&#10004; jeden Tag</text>
+    <!-- MAX sitting determined at desk -->
+    <!-- body seated -->
+    <path d="M 130 155 Q 128 168 155 172 Q 175 174 192 168 Q 205 160 200 155 Z" fill="#2c4a6e"/>
+    <!-- arm writing/leaning on desk -->
+    <path d="M 192 160 Q 208 155 225 152 Q 240 150 250 150" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <ellipse cx="252" cy="150" rx="7" ry="6" fill="#d4956a"/>
+    <!-- other arm on desk -->
+    <path d="M 132 160 Q 112 155 95 152" stroke="#d4956a" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- neck -->
+    <rect x="155" y="128" width="17" height="20" fill="#d4956a" rx="3"/>
+    <!-- HEAD — DETERMINED, set jaw -->
+    <ellipse cx="163" cy="109" rx="28" ry="31" fill="#d4956a"/>
+    <path d="M 137 117 Q 135 133 146 141 Q 163 148 180 141 Q 191 133 189 117" fill="#d4956a"/>
+    <ellipse cx="136" cy="112" rx="5" ry="7" fill="#c8845a"/>
+    <!-- hair -->
+    <path d="M 137 95 Q 135 78 148 71 Q 163 65 178 71 Q 191 78 189 95 Q 186 84 178 81 Q 163 76 149 81 Q 139 86 137 95 Z" fill="#2a1a08"/>
+    <path d="M 137 95 Q 132 105 134 116 Q 137 111 138 103 Z" fill="#231508"/>
+    <path d="M 189 95 Q 194 105 192 116 Q 189 111 188 103 Z" fill="#2a1a08"/>
+    <!-- eyes determined — same as before but with fire -->
+    <ellipse cx="151" cy="109" rx="9" ry="9" fill="#f0ece4"/>
+    <ellipse cx="175" cy="109" rx="9" ry="9" fill="#f0ece4"/>
+    <circle cx="153" cy="109" r="6" fill="#5a3a18"/>
+    <circle cx="177" cy="109" r="6" fill="#5a3a18"/>
+    <circle cx="153" cy="109" r="3.8" fill="#2a1a08"/>
+    <circle cx="177" cy="109" r="3.8" fill="#2a1a08"/>
+    <circle cx="155" cy="107" r="2" fill="#FFD700" opacity=".7"/>
+    <circle cx="179" cy="107" r="2" fill="#FFD700" opacity=".7"/>
+    <!-- determined brows angled down center -->
+    <path d="M 142 99 Q 151 94 160 98" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <path d="M 166 98 Q 175 94 184 99" stroke="#2a1a08" stroke-width="2.5" fill="none"/>
+    <!-- firm determined mouth -->
+    <path d="M 152 125 Q 163 129 174 125" stroke="#9a5530" stroke-width="2" fill="none"/>
+    <!-- sparkle in eyes — motivation -->
+    <text x="192" y="85" font-family="serif" font-size="14" fill="#FFD700" opacity=".8">&#9733;</text>
+    <text x="120" y="85" font-family="serif" font-size="10" fill="#FAC775" opacity=".7">&#9733;</text>
+  </svg>
+  <div class="bub" style="top:10px;left:50%;transform:translateX(-50%);">
+    <div class="bi warm" style="max-width:200px;font-size:0.72rem;">Okay! Ich verstehe! Ich lerne jetzt Deutsch &#8212; jeden Tag! Ich gebe nicht auf!</div>
+    <div class="bt dl-w" style="border-top-color:#7B3F00;margin:0 auto;"></div>
+  </div>
+  <div class="cap green">Max beschlie&#223;t es: Er lernt Deutsch &#8212; f&#252;r seine Zukunft!</div>
+</div>
+
+<!-- P8: Älterer Max verschwindet — lächelt -->
+<div class="cell" style="min-height:250px;background:#0a0820;">
+  <div class="pnum">8</div>
+  <svg viewBox="0 0 320 250" xmlns="http://www.w3.org/2000/svg">
+    <rect width="320" height="250" fill="#0a0820"/>
+    <!-- future Max fading away, happy -->
+    <ellipse cx="200" cy="125" rx="110" ry="110" fill="#9b59b6" opacity=".05"/>
+    <ellipse cx="200" cy="125" rx="75" ry="80" fill="#9b59b6" opacity=".07"/>
+    <!-- FUTURE MAX — fading, transparent, smiling -->
+    <!-- body fading -->
+    <path d="M 165 160 Q 163 182 165 200 Q 167 210 182 215 Q 210 222 238 213 Q 250 204 248 186 Q 246 165 243 160 Z" fill="#1a2a4e" opacity=".5"/>
+    <!-- neck -->
+    <rect x="195" y="140" width="16" height="20" fill="#d4956a" rx="3" opacity=".5"/>
+    <!-- head fading -->
+    <ellipse cx="203" cy="118" rx="30" ry="33" fill="#d4956a" opacity=".55"/>
+    <path d="M 175 127 Q 173 144 185 153 Q 203 160 221 153 Q 233 144 231 127" fill="#d4956a" opacity=".55"/>
+    <!-- glowing outline fading -->
+    <ellipse cx="203" cy="118" rx="32" ry="35" fill="none" stroke="#d7b4f5" stroke-width="2" opacity=".4"/>
+    <!-- hair fading -->
+    <path d="M 175 102 Q 173 84 187 77 Q 203 71 219 77 Q 233 84 231 102 Q 227 91 219 88 Q 203 83 188 88 Q 178 93 175 102 Z" fill="#2a1a08" opacity=".5"/>
+    <!-- eyes — HAPPY, warm, same eyes but glowing purple -->
+    <ellipse cx="191" cy="118" rx="9" ry="9" fill="#f0ece4" opacity=".6"/>
+    <ellipse cx="215" cy="118" rx="9" ry="9" fill="#f0ece4" opacity=".6"/>
+    <circle cx="192" cy="118" r="6" fill="#5a3a18" opacity=".6"/>
+    <circle cx="216" cy="118" r="6" fill="#5a3a18" opacity=".6"/>
+    <circle cx="192" cy="118" r="3.8" fill="#2a1a08" opacity=".6"/>
+    <circle cx="216" cy="118" r="3.8" fill="#2a1a08" opacity=".6"/>
+    <!-- happy glowing eyes -->
+    <circle cx="194" cy="116" r="2.2" fill="#d7b4f5" opacity=".9"/>
+    <circle cx="218" cy="116" r="2.2" fill="#d7b4f5" opacity=".9"/>
+    <!-- curved happy eyes -->
+    <path d="M 183 116 Q 191 110 199 116" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4" opacity=".6"/>
+    <path d="M 207 116 Q 215 110 223 116" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4" opacity=".6"/>
+    <!-- big warm smile — relief -->
+    <path d="M 191 140 Q 203 149 215 140" stroke="#9a5530" stroke-width="2.5" fill="none" opacity=".7"/>
+    <!-- stubble fading -->
+    <ellipse cx="188" cy="144" rx="7" ry="3" fill="#c07040" opacity=".1"/>
+    <!-- particle disintegration -->
+    <circle cx="150" cy="80" r="3" fill="#d7b4f5" opacity=".5"/>
+    <circle cx="260" cy="70" r="2.5" fill="#9b59b6" opacity=".6"/>
+    <circle cx="145" cy="140" r="2" fill="#d7b4f5" opacity=".4"/>
+    <circle cx="265" cy="150" r="3" fill="#9b59b6" opacity=".5"/>
+    <circle cx="170" cy="55" r="2" fill="#FAC775" opacity=".4"/>
+    <circle cx="240" cy="95" r="2.5" fill="#d7b4f5" opacity=".6"/>
+    <circle cx="155" cy="180" r="2" fill="#9b59b6" opacity=".4"/>
+    <circle cx="255" cy="175" r="2" fill="#d7b4f5" opacity=".5"/>
+    <circle cx="200" cy="45" r="3" fill="#FAC775" opacity=".3"/>
+    <!-- sparkles -->
+    <text x="130" y="65" font-family="serif" font-size="18" fill="#d7b4f5" opacity=".6">&#10022;</text>
+    <text x="255" y="58" font-family="serif" font-size="14" fill="#9b59b6" opacity=".7">&#10022;</text>
+    <text x="268" y="195" font-family="serif" font-size="16" fill="#d7b4f5" opacity=".5">&#10022;</text>
+    <text x="110" y="195" font-family="serif" font-size="12" fill="#FAC775" opacity=".5">&#9733;</text>
+  </svg>
+  <div class="bub" style="top:10px;right:8px;">
+    <div class="bi future" style="max-width:160px;font-size:0.7rem;">Gut. Jetzt ist alles anders. Mach weiter so! Tsch&#252;ss&#8230; ich meine&#8230; tsch&#252;ss, ich!</div>
+    <div class="bt dr-f"></div>
+  </div>
+  <div class="sfx" style="left:15px;bottom:40px;font-size:1rem;color:#9b59b6;transform:rotate(-10deg);">PUFF&#8230;</div>
+  <div class="cap future">Der &#228;ltere Max l&#228;chelt&#8230; und verschwindet.</div>
+</div>
+
+</div>
+
+<!-- ROW 6: Finale -->
+<div class="grid g1">
+<div class="cell" style="min-height:195px;background:#fff9f0;">
+  <div class="pnum">9</div>
+  <svg viewBox="0 0 640 195" xmlns="http://www.w3.org/2000/svg">
+    <rect width="640" height="195" fill="#fff9f5"/>
+    <rect width="640" height="70" fill="#fef0e6"/>
+    <circle cx="320" cy="26" r="30" fill="#FFD700" opacity=".7"/>
+    <!-- school building -->
+    <rect x="238" y="26" width="164" height="78" fill="#f5e6c8" stroke="#d4a574" stroke-width="1.5"/>
+    <polygon points="228,26 412,26 320,2" fill="#c0392b" opacity=".65"/>
+    <rect x="298" y="64" width="22" height="40" fill="#8B6FBA" opacity=".7"/>
+    <!-- sign on school -->
+    <rect x="248" y="30" width="144" height="16" fill="#7B3F00" rx="3"/>
+    <text x="320" y="41" text-anchor="middle" font-family="Bangers,sans-serif" font-size="10" fill="#FAC775" letter-spacing="1">KLASSE 10VP</text>
+    <!-- ground -->
+    <rect x="0" y="148" width="640" height="47" fill="#7ec850"/>
+    <line x1="0" y1="148" x2="640" y2="148" stroke="#5a9a30" stroke-width="1.5"/>
+    <!-- mysterious envelope on ground — now empty, its purpose done -->
+    <rect x="42" y="135" width="48" height="32" fill="#fef8e8" rx="3" stroke="#BA7517" stroke-width="1" opacity=".5" transform="rotate(8 42 135)"/>
+    <!-- purple sparkle from envelope -->
+    <text x="60" y="132" font-family="serif" font-size="10" fill="#9b59b6" opacity=".4">&#10022;</text>
+    <!-- MAX walking toward school, confident, textbook under arm -->
+    <ellipse cx="320" cy="118" rx="26" ry="28" fill="#d4956a"/>
+    <path d="M 296 127 Q 294 145 306 153 Q 320 159 334 153 Q 346 145 344 127" fill="#d4956a"/>
+    <path d="M 296 110 Q 294 94 306 87 Q 320 81 334 87 Q 346 94 344 110 Q 341 99 334 97 Q 320 92 306 97 Q 297 101 296 110 Z" fill="#2a1a08"/>
+    <path d="M 296 110 Q 290 104 293 94 Q 287 102 291 112 Z" fill="#231508"/>
+    <path d="M 344 110 Q 350 104 347 94 Q 353 102 349 112 Z" fill="#231508"/>
+    <!-- body walking -->
+    <path d="M 294 155 Q 292 170 294 185 Q 296 192 308 195" fill="none"/>
+    <path d="M 296 155 Q 290 162 288 175 Q 286 182 292 188" stroke="#1e3050" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <path d="M 344 155 Q 350 162 352 175 Q 354 182 348 188" stroke="#1e3050" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <ellipse cx="291" cy="189" rx="11" ry="5" fill="#111"/>
+    <ellipse cx="349" cy="189" rx="11" ry="5" fill="#111"/>
+    <!-- body torso -->
+    <path d="M 294 155 Q 292 172 320 178 Q 348 172 346 155 Z" fill="#2c4a6e"/>
+    <!-- arm holding textbook confidently -->
+    <path d="M 346 160 Q 365 155 382 152 Q 395 150 398 150" stroke="#d4956a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <rect x="390" y="140" width="35" height="24" fill="#8B2500" rx="3"/>
+    <text x="407" y="152" text-anchor="middle" font-family="Comic Neue,cursive" font-size="6" fill="#FAC775" font-weight="bold">DEUTSCH</text>
+    <!-- other arm natural swing -->
+    <path d="M 294 162 Q 275 158 262 155" stroke="#d4956a" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- face — confident happy smile, looking forward -->
+    <ellipse cx="308" cy="118" rx="9" ry="9" fill="#f0ece4"/>
+    <ellipse cx="332" cy="118" rx="9" ry="9" fill="#f0ece4"/>
+    <path d="M 300 116 Q 308 110 316 116" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4"/>
+    <path d="M 324 116 Q 332 110 340 116" stroke="#2a1a08" stroke-width="2.5" fill="#f0ece4"/>
+    <path d="M 308 133 Q 320 141 332 133" stroke="#c0392b" stroke-width="2.5" fill="#FF9999"/>
+    <!-- hearts / stars -->
+    <text x="215" y="90" font-family="serif" font-size="20" fill="#9b59b6">&#10022;</text>
+    <text x="408" y="90" font-family="serif" font-size="18" fill="#FAC775">&#9733;</text>
+    <text x="165" y="108" font-family="serif" font-size="13" fill="#1D9E75">&#10084;</text>
+    <text x="457" y="108" font-family="serif" font-size="13" fill="#E74C3C">&#10084;</text>
+    <text x="320" y="65" text-anchor="middle" font-family="serif" font-size="24" fill="#FFD700">&#9733;</text>
+  </svg>
+  <div class="bub" style="top:8px;left:50%;transform:translateX(-50%);">
+    <div class="bi happy" style="max-width:330px;font-size:0.75rem;border-width:2.5px;">Ich lerne Deutsch &#8212; f&#252;r mich, f&#252;r meine Zukunft! Danke&#8230; mir!</div>
+    <div class="bt dl-h" style="border-top-color:#1D9E75;margin:0 auto;"></div>
+  </div>
+  <div class="cap green">Max geht zur Schule &#8212; mit dem Deutschbuch unter dem Arm!</div>
+</div>
+</div>
+
+<div style="text-align:center;margin-top:1rem;">
+  <button class="actbtn" onclick="tab('quiz')">Quiz machen &#9999;&#65039;</button>
+  <button class="actbtn green" onclick="tab('vocab')">Vokabeln lernen &#128218;</button>
+</div>
+</div>
+
+<!-- VOCAB -->
+<div id="tab-vocab" class="panel">
+<div class="vc">
+  <div class="vt">Vokabeln aus der Geschichte</div>
+  <div class="vg">
+    <div class="vi"><span class="vde">der Brief</span><span class="vfr">la lettre</span></div>
+    <div class="vi"><span class="vde">die Zukunft</span><span class="vfr">l'avenir / le futur</span></div>
+    <div class="vi"><span class="vde">die Vergangenheit</span><span class="vfr">le passé</span></div>
+    <div class="vi"><span class="vde">suchen</span><span class="vfr">chercher</span></div>
+    <div class="vi"><span class="vde">der Schrank</span><span class="vfr">l'armoire</span></div>
+    <div class="vi"><span class="vde">die Bibliothek</span><span class="vfr">la bibliothèque</span></div>
+    <div class="vi"><span class="vde">unm&#246;glich</span><span class="vfr">impossible</span></div>
+    <div class="vi"><span class="vde">wichtig</span><span class="vfr">important</span></div>
+    <div class="vi"><span class="vde">lernen</span><span class="vfr">apprendre</span></div>
+    <div class="vi"><span class="vde">verlieren</span><span class="vfr">perdre</span></div>
+    <div class="vi"><span class="vde">der Job</span><span class="vfr">le travail / l'emploi</span></div>
+    <div class="vi"><span class="vde">verstehen</span><span class="vfr">comprendre</span></div>
+    <div class="vi"><span class="vde">aufgeben</span><span class="vfr">abandonner</span></div>
+    <div class="vi"><span class="vde">jeden Tag</span><span class="vfr">chaque jour</span></div>
+    <div class="vi"><span class="vde">anders</span><span class="vfr">différent / autrement</span></div>
+    <div class="vi"><span class="vde">verschwinden</span><span class="vfr">disparaître</span></div>
+    <div class="vi"><span class="vde">ich gebe nicht auf</span><span class="vfr">je n'abandonne pas</span></div>
+    <div class="vi"><span class="vde">h&#246;r mir zu!</span><span class="vfr">écoute-moi !</span></div>
+  </div>
+</div>
+<div style="text-align:center;margin-top:0.8rem;">
+  <button class="actbtn" onclick="tab('quiz')">Quiz starten &#9999;&#65039;</button>
+</div>
+</div>
+
+<!-- QUIZ -->
+<div id="tab-quiz" class="panel">
+<div style="background:#111;border:1.5px solid #7B3F00;border-radius:10px;padding:0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#FAC775;font-weight:700;">Lies die BD nochmal und beantworte die Fragen!</div>
+<div id="sdisplay" class="scorebox"><div class="scorenum" id="snum">0/0</div><div style="font-size:0.8rem;color:#888;margin-top:2px;">richtige Antworten</div></div>
+
+<div id="q1" class="qcard"><div class="qtxt"><span class="qn">1</span>Was findet Max am Morgen?</div><div class="opts">
+  <button class="opt" onclick="ans(this,1,false)">A) Ein Buch in der Schule.</button>
+  <button class="opt" onclick="ans(this,1,true)">B) Einen mysteriösen Brief im Briefkasten.</button>
+  <button class="opt" onclick="ans(this,1,false)">C) Ein Handy auf der Straße.</button>
+</div><div class="fb" id="fb1"></div></div>
+
+<div id="q2" class="qcard"><div class="qtxt"><span class="qn">2</span>Was steht im Brief?</div><div class="opts">
+  <button class="opt" onclick="ans(this,2,false)">A) Eine Einladung zu einer Party.</button>
+  <button class="opt" onclick="ans(this,2,true)">B) Er soll in die Bibliothek gehen, zu Schrank Nr. 7.</button>
+  <button class="opt" onclick="ans(this,2,false)">C) Seine Hausaufgaben sind falsch.</button>
+</div><div class="fb" id="fb2"></div></div>
+
+<div id="q3" class="qcard"><div class="qtxt"><span class="qn">3</span>Wer hat den Brief geschrieben?</div><div class="opts">
+  <button class="opt" onclick="ans(this,3,false)">A) Frau Schmid.</button>
+  <button class="opt" onclick="ans(this,3,false)">B) Ein Freund aus der Klasse.</button>
+  <button class="opt" onclick="ans(this,3,true)">C) Max selbst — aus der Zukunft.</button>
+</div><div class="fb" id="fb3"></div></div>
+
+<div id="q4" class="qcard"><div class="qtxt"><span class="qn">4</span>Was ist das Problem in der Zukunft?</div><div class="opts">
+  <button class="opt" onclick="ans(this,4,false)">A) Max hat kein Geld.</button>
+  <button class="opt" onclick="ans(this,4,true)">B) Max lernt kein Deutsch und verliert seinen Job.</button>
+  <button class="opt" onclick="ans(this,4,false)">C) Max hat keine Freunde.</button>
+</div><div class="fb" id="fb4"></div></div>
+
+<div id="q5" class="qcard"><div class="qtxt"><span class="qn">5</span>Was beschließt der junge Max am Ende?</div><div class="opts">
+  <button class="opt" onclick="ans(this,5,false)">A) Er geht nicht mehr zur Schule.</button>
+  <button class="opt" onclick="ans(this,5,true)">B) Er lernt Deutsch &#8212; jeden Tag!</button>
+  <button class="opt" onclick="ans(this,5,false)">C) Er reist selbst in die Zukunft.</button>
+</div><div class="fb" id="fb5"></div></div>
+
+<div id="q6" class="qcard"><div class="qtxt"><span class="qn">6</span>Was bedeutet &#8222;die Zukunft&#8221;?</div><div class="opts">
+  <button class="opt" onclick="ans(this,6,false)">A) le passé</button>
+  <button class="opt" onclick="ans(this,6,true)">B) le futur / l'avenir</button>
+  <button class="opt" onclick="ans(this,6,false)">C) le présent</button>
+</div><div class="fb" id="fb6"></div></div>
+
+<div id="q7" class="qcard"><div class="qtxt"><span class="qn">7</span>Was bedeutet &#8222;ich gebe nicht auf&#8221;?</div><div class="opts">
+  <button class="opt" onclick="ans(this,7,false)">A) je donne quelque chose</button>
+  <button class="opt" onclick="ans(this,7,false)">B) j'abandonne</button>
+  <button class="opt" onclick="ans(this,7,true)">C) je n'abandonne pas</button>
+</div><div class="fb" id="fb7"></div></div>
+
+<div id="q8" class="qcard"><div class="qtxt"><span class="qn">8</span>Wie alt ist Max aus der Zukunft?</div><div class="opts">
+  <button class="opt" onclick="ans(this,8,false)">A) 20 Jahre alt</button>
+  <button class="opt" onclick="ans(this,8,true)">B) 30 Jahre alt</button>
+  <button class="opt" onclick="ans(this,8,false)">C) 40 Jahre alt</button>
+</div><div class="fb" id="fb8"></div></div>
+
+<div style="background:#3a1800;border-radius:8px;padding:6px 12px;margin-bottom:0.7rem;font-family:'Bangers',cursive;font-size:1rem;color:#FAC775;letter-spacing:1px;">&#9999;&#65039; Freie Antworten</div>
+
+<div class="openq"><div class="qtxt"><span class="qn green">9</span>Wenn du einen Brief an dich selbst in der Zukunft schreibst &#8212; was sagst du? Schreib zwei S&#228;tze!</div>
+  <div style="margin-top:5px;"><span class="hint">Lieber ich&#8230;</span><span class="hint">In der Zukunft&#8230;</span><span class="hint">Du musst&#8230;</span></div>
+  <textarea placeholder="Lieber ich&#8230; In der Zukunft &#8230;"></textarea>
+</div>
+
+<div class="openq"><div class="qtxt"><span class="qn green">10</span>Warum ist Deutsch wichtig f&#252;r die Zukunft? Schreib auf Deutsch!</div>
+  <div style="margin-top:5px;"><span class="hint">Deutsch ist wichtig, weil&#8230;</span><span class="hint">Mit Deutsch kann ich&#8230;</span><span class="hint">In der Zukunft&#8230;</span></div>
+  <textarea placeholder="Deutsch ist wichtig, weil &#8230;"></textarea>
+</div>
+
+<div style="margin-top:0.8rem;">
+  <button class="actbtn" onclick="showScore()">Ergebnisse zeigen &#127919;</button>
+  <button class="resetbtn" onclick="resetQ()">Neustart</button>
+</div>
+</div>
+
+<script>
+let done={},correct=0,total=8;
+function tab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.add('on');
+  const idx={bd:0,vocab:1,quiz:2}[n];
+  document.querySelectorAll('.tab')[idx].classList.add('on');
+}
+function ans(btn,q,ok){
+  if(done[q])return; done[q]=true;
+  const card=document.getElementById('q'+q);
+  const fb=document.getElementById('fb'+q);
+  card.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('right');fb.textContent='Richtig! Sehr gut!';fb.className='fb ok';card.classList.add('ok');correct++;}
+  else{btn.classList.add('wrong');card.classList.add('ko');card.querySelectorAll('.opt').forEach(b=>{if(b.onclick.toString().includes('true'))b.classList.add('showok');});fb.textContent=['Nicht ganz... Lies nochmal!','Fast! Schau die BD nochmal an.','Noch einmal versuchen!'][Math.floor(Math.random()*3)];fb.className='fb ko';}
+  const d=Object.keys(done).length;
+  document.getElementById('snum').textContent=correct+'/'+d;
+  document.getElementById('sdisplay').classList.add('on');
+}
+function showScore(){
+  const d=Object.keys(done).length;
+  let s=correct+'/'+total;
+  if(d<total)s+=' (noch '+(total-d)+' Fragen offen!)';
+  else s+=correct>=7?' Ausgezeichnet!':correct>=5?' Gut gemacht!':' Weiter ueben!';
+  document.getElementById('snum').textContent=s;
+  document.getElementById('sdisplay').classList.add('on');
+  document.getElementById('sdisplay').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQ(){
+  done={};correct=0;
+  document.getElementById('sdisplay').classList.remove('on');
+  for(let i=1;i<=8;i++){const c=document.getElementById('q'+i);if(!c)continue;c.classList.remove('ok','ko');document.getElementById('fb'+i).className='fb';c.querySelectorAll('.opt').forEach(b=>{b.disabled=false;b.className='opt';});}
+  document.querySelectorAll('textarea').forEach(t=>t.value='');
+}
+</script>

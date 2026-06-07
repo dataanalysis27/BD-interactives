@@ -1,0 +1,636 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0a0f;font-family:'Comic Neue',cursive;color:#eee;padding:1.2rem;}
+.logo{font-family:'Bangers',cursive;font-size:2.5rem;letter-spacing:3px;color:#fff;text-shadow:4px 4px 0 #BA7517,7px 7px 0 #412402;line-height:1;text-align:center;}
+.sub{font-size:0.75rem;color:#FAC775;letter-spacing:3px;margin-top:4px;text-align:center;}
+.brow{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+.bdg{background:#412402;color:#FAC775;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #BA7517;}
+.tabs{display:flex;gap:0;border-bottom:2px solid #BA7517;margin:1rem 0;}
+.tab{font-family:'Bangers',cursive;font-size:1rem;letter-spacing:1px;padding:8px 18px;background:transparent;color:#888;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.tab.on{color:#fff;border-bottom:3px solid #FAC775;}
+.panel{display:none;}.panel.on{display:block;}
+.grid{display:grid;gap:3px;background:#000;border:3px solid #222;border-radius:4px;overflow:hidden;margin-bottom:3px;}
+.g2{grid-template-columns:1fr 1fr;}.g1{grid-template-columns:1fr;}
+.cell{background:#fff;position:relative;overflow:hidden;}
+.cell svg{display:block;width:100%;height:100%;position:absolute;inset:0;}
+.pnum{position:absolute;top:5px;left:5px;width:20px;height:20px;background:#BA7517;color:#fff;border-radius:50%;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:30;border:2px solid #fff;}
+.bub{position:absolute;z-index:20;}
+.bi{background:#fff;border:2.5px solid #111;border-radius:12px;padding:5px 9px;font-family:'Comic Neue',cursive;font-size:0.72rem;font-weight:700;color:#111;line-height:1.35;max-width:155px;text-align:center;}
+.bi.gold{background:#FAEEDA;border-color:#BA7517;color:#412402;}
+.bi.dark{background:#111;color:#FAC775;border-color:#BA7517;}
+.bi.shout{background:#fff3cd;border-color:#c0392b;border-width:3px;color:#7B241C;}
+.bi.happy{background:#E1F5EE;border-color:#1D9E75;color:#085041;}
+.bi.sad{background:#FAECE7;border-color:#993C1D;color:#4A1B0C;}
+.bt{width:0;height:0;}
+.bt.dl{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #111;margin-left:18px;}
+.bt.dr{border-left:4px solid transparent;border-right:8px solid transparent;border-top:10px solid #111;margin-left:auto;margin-right:18px;}
+.bt.dl-g{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #BA7517;margin-left:18px;}
+.bt.dl-h{border-left:8px solid transparent;border-right:4px solid transparent;border-top:10px solid #1D9E75;margin-left:18px;}
+.cap{position:absolute;bottom:0;left:0;right:0;background:#412402;color:#FAC775;font-family:'Comic Neue',cursive;font-size:0.68rem;font-weight:700;padding:4px 8px;border-top:2px solid #BA7517;font-style:italic;}
+.cap.blue{background:#0C447C;color:#B5D4F4;border-top-color:#378ADD;}
+.cap.dark{background:#111;color:#FAC775;border-top-color:#BA7517;}
+.cap.green{background:#085041;color:#9FE1CB;border-top-color:#1D9E75;}
+.cap.top{top:0;bottom:auto;border-top:none;border-bottom:2px solid #BA7517;}
+.sfx{position:absolute;font-family:'Bangers',cursive;z-index:15;pointer-events:none;}
+.qcard{background:#111;border:1.5px solid #BA7517;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.qcard.ok{border-color:#1D9E75;background:#04342C22;}
+.qcard.ko{border-color:#993C1D;background:#4A1B0C22;}
+.qtxt{font-size:0.88rem;font-weight:700;color:#eee;margin-bottom:0.7rem;display:flex;align-items:flex-start;gap:8px;}
+.qn{display:inline-flex;align-items:center;justify-content:center;background:#BA7517;color:#fff;border-radius:50%;width:24px;height:24px;font-size:0.75rem;font-weight:700;flex-shrink:0;}
+.qn.green{background:#1D9E75;}
+.opts{display:flex;flex-direction:column;gap:5px;}
+.opt{font-family:'Comic Neue',cursive;font-size:0.82rem;font-weight:700;text-align:left;padding:7px 12px;border-radius:7px;border:1.5px solid #BA7517;background:#1a1000;color:#ddd;cursor:pointer;transition:all .12s;}
+.opt:hover:not(:disabled){background:#412402;border-color:#FAC775;}
+.opt.right{background:#04342C;border-color:#1D9E75;color:#9FE1CB;}
+.opt.wrong{background:#4A1B0C;border-color:#993C1D;color:#F5C4B3;}
+.opt.showok{background:#085041;border-color:#1D9E75;color:#9FE1CB;opacity:.7;}
+.fb{font-size:0.78rem;font-weight:700;padding:5px 8px;border-radius:5px;margin-top:6px;display:none;}
+.fb.ok{background:#085041;color:#9FE1CB;display:block;}
+.fb.ko{background:#712B13;color:#F5C4B3;display:block;}
+.openq{background:#111;border:1.5px solid #BA7517;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.openq textarea{width:100%;min-height:65px;background:#0a0a0f;border:1.5px solid #BA7517;border-radius:6px;padding:8px;font-family:'Comic Neue',cursive;font-size:0.82rem;color:#eee;resize:vertical;margin-top:6px;}
+.hint{display:inline-block;background:#412402;color:#FAC775;font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:8px;margin:2px;}
+.scorebox{background:#111;border:2px solid #BA7517;border-radius:10px;padding:1rem;text-align:center;margin-bottom:1rem;display:none;}
+.scorebox.on{display:block;}
+.scorenum{font-family:'Bangers',cursive;font-size:2.8rem;color:#BA7517;letter-spacing:2px;}
+.actbtn{font-family:'Bangers',cursive;letter-spacing:1px;font-size:1rem;padding:9px 22px;border-radius:20px;background:#BA7517;color:#fff;border:none;cursor:pointer;margin-top:0.5rem;transition:transform .1s;}
+.actbtn:hover{transform:scale(1.04);}
+.actbtn.green{background:#1D9E75;margin-left:8px;}
+.resetbtn{font-family:'Comic Neue',cursive;font-size:0.82rem;padding:7px 18px;border-radius:20px;background:transparent;color:#BA7517;border:2px solid #BA7517;cursor:pointer;margin-left:8px;}
+.vc{background:#111;border:1.5px solid #BA7517;border-radius:10px;padding:1rem;margin-bottom:0.9rem;}
+.vt{font-family:'Bangers',cursive;font-size:1.2rem;color:#FAC775;letter-spacing:1px;margin-bottom:0.6rem;}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;}
+.vi{display:flex;gap:6px;font-size:0.8rem;padding:4px 0;border-bottom:1px solid #412402;align-items:baseline;}
+.vde{font-weight:700;color:#FAC775;min-width:110px;}
+.vfr{color:#666;}
+</style>
+
+<div class="logo">ICH W&#220;NSCHE MIR&#8230;!!</div>
+<div class="sub">eine fantasy-manga-story auf deutsch</div>
+<div class="brow">
+  <span class="bdg">A1&#8211;A2</span><span class="bdg">10VP &#183; Vaud</span><span class="bdg">Fantasy-Style</span>
+</div>
+<div class="tabs">
+  <button class="tab on" onclick="tab('bd')">manga lesen</button>
+  <button class="tab" onclick="tab('vocab')">vokabeln</button>
+  <button class="tab" onclick="tab('quiz')">quiz</button>
+</div>
+
+<div id="tab-bd" class="panel on">
+
+<div class="grid g2">
+  <div class="cell" style="min-height:270px;background:#0a0a1a;">
+    <div class="pnum">1</div>
+    <div class="cap top">Nachts. Emma schaut aus dem Fenster.</div>
+    <svg viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="270" fill="#0a0a1a"/>
+      <rect width="320" height="180" fill="#0d0d2e"/>
+      <circle cx="40" cy="30" r="1.5" fill="#fff" opacity=".8"/>
+      <circle cx="90" cy="45" r="1" fill="#fff" opacity=".6"/>
+      <circle cx="150" cy="25" r="2" fill="#fff" opacity=".9"/>
+      <circle cx="210" cy="38" r="1.5" fill="#fff" opacity=".7"/>
+      <circle cx="270" cy="28" r="1" fill="#fff" opacity=".6"/>
+      <circle cx="55" cy="65" r="1" fill="#fff" opacity=".5"/>
+      <circle cx="180" cy="60" r="1.5" fill="#fff" opacity=".7"/>
+      <circle cx="240" cy="70" r="1" fill="#fff" opacity=".6"/>
+      <line x1="290" y1="35" x2="240" y2="65" stroke="#FFD700" stroke-width="2.5" opacity=".9"/>
+      <circle cx="240" cy="65" r="5" fill="#FFD700" opacity=".9"/>
+      <rect width="320" height="70" y="200" fill="#1a1020"/>
+      <rect x="50" y="228" width="220" height="8" fill="#5a3a1a" rx="2"/>
+      <rect x="55" y="188" width="210" height="42" fill="#1a2040" rx="4" stroke="#333" stroke-width="1.5"/>
+      <ellipse cx="160" cy="218" rx="28" ry="25" fill="#e8b89a"/>
+      <ellipse cx="160" cy="197" rx="30" ry="18" fill="#1a1a1a"/>
+      <rect x="132" y="197" width="9" height="28" fill="#1a1a1a" rx="4"/>
+      <rect x="153" y="189" width="16" height="9" fill="#BA7517" rx="3"/>
+      <ellipse cx="150" cy="219" rx="7" ry="7.5" fill="#fff"/>
+      <ellipse cx="170" cy="219" rx="7" ry="7.5" fill="#fff"/>
+      <circle cx="151" cy="217" r="4.5" fill="#2c2c8a"/>
+      <circle cx="171" cy="217" r="4.5" fill="#2c2c8a"/>
+      <circle cx="151" cy="215" r="2.5" fill="#111"/>
+      <circle cx="171" cy="215" r="2.5" fill="#111"/>
+      <circle cx="153" cy="213" r="1.2" fill="#fff"/>
+      <circle cx="173" cy="213" r="1.2" fill="#fff"/>
+      <path d="M 153 228 Q 160 232 167 228" stroke="#c0392b" stroke-width="1.5" fill="none"/>
+      <rect x="136" y="245" width="48" height="11" fill="#BA7517" rx="3"/>
+      <text x="160" y="253" text-anchor="middle" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#fff">EMMA, 14</text>
+    </svg>
+    <div class="bub" style="top:26px;left:8px;">
+      <div class="bi gold" style="max-width:175px;font-size:0.7rem;">Eine Sternschnuppe! Ich w&#252;nsche mir keine Schule mehr! Nie wieder!</div>
+      <div class="bt dl-g"></div>
+    </div>
+  </div>
+
+  <div class="cell" style="min-height:270px;background:#1a0a00;">
+    <div class="pnum">2</div>
+    <svg viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="270" fill="#1a0a00"/>
+      <g opacity=".2">
+        <line x1="160" y1="130" x2="0" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="160" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="320" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="320" y2="130" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="320" y2="270" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="160" y2="270" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="0" y2="270" stroke="#FFD700" stroke-width="2"/>
+        <line x1="160" y1="130" x2="0" y2="130" stroke="#FFD700" stroke-width="2"/>
+      </g>
+      <circle cx="160" cy="130" r="70" fill="#412402" opacity=".6"/>
+      <circle cx="160" cy="130" r="48" fill="#633806" opacity=".7"/>
+      <polygon points="160,75 169,112 210,130 169,148 160,185 151,148 110,130 151,112" fill="#FFD700" opacity=".9"/>
+      <polygon points="160,88 166,113 192,130 166,147 160,172 154,147 128,130 154,113" fill="#fff" opacity=".8"/>
+      <text x="60" y="65" font-family="serif" font-size="20" fill="#FFD700">&#9733;</text>
+      <text x="240" y="65" font-family="serif" font-size="16" fill="#FFD700">&#9733;</text>
+      <text x="50" y="180" font-family="serif" font-size="14" fill="#FAC775">&#10022;</text>
+      <text x="255" y="180" font-family="serif" font-size="18" fill="#FAC775">&#10022;</text>
+      <text x="160" y="125" text-anchor="middle" font-family="Bangers,sans-serif" font-size="12" fill="#412402">WUNSCH</text>
+      <text x="160" y="140" text-anchor="middle" font-family="Bangers,sans-serif" font-size="12" fill="#412402">ERF&#220;LLT!</text>
+    </svg>
+    <div class="bub" style="bottom:28px;left:50%;transform:translateX(-50%);">
+      <div class="bi shout" style="white-space:nowrap;font-size:0.82rem;">Mein Traum ist wahr geworden!!</div>
+    </div>
+    <div class="sfx" style="top:12px;right:10px;font-size:1.3rem;color:#FFD700;transform:rotate(15deg);">PUFF!</div>
+    <div class="cap dark">Der Wunsch wird wahr! Keine Schule mehr!!</div>
+  </div>
+</div>
+
+<div class="grid g1">
+  <div class="cell" style="min-height:260px;background:#87CEEB;">
+    <div class="pnum">3</div>
+    <svg viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg">
+      <rect width="640" height="260" fill="#87CEEB"/>
+      <circle cx="560" cy="45" r="38" fill="#FFD700" opacity=".9"/>
+      <ellipse cx="100" cy="45" rx="55" ry="28" fill="#fff" opacity=".9"/>
+      <ellipse cx="140" cy="35" rx="40" ry="22" fill="#fff" opacity=".9"/>
+      <ellipse cx="350" cy="58" rx="50" ry="25" fill="#fff" opacity=".8"/>
+      <ellipse cx="390" cy="48" rx="38" ry="20" fill="#fff" opacity=".8"/>
+      <rect x="0" y="200" width="640" height="60" fill="#5cb85c"/>
+      <rect x="0" y="197" width="640" height="6" fill="#4a9a4a"/>
+      <circle cx="60" cy="198" r="8" fill="#FFD700"/>
+      <circle cx="120" cy="198" r="6" fill="#ED93B1"/>
+      <circle cx="200" cy="198" r="7" fill="#fff"/>
+      <circle cx="350" cy="198" r="8" fill="#FF6B6B"/>
+      <circle cx="500" cy="198" r="6" fill="#FFD700"/>
+      <circle cx="580" cy="198" r="7" fill="#ED93B1"/>
+      <rect x="480" y="100" width="80" height="60" fill="#fff" stroke="#333" stroke-width="2" rx="4"/>
+      <text x="520" y="128" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#333" font-weight="bold">SCHULE</text>
+      <line x1="478" y1="98" x2="562" y2="162" stroke="#c0392b" stroke-width="4"/>
+      <line x1="562" y1="98" x2="478" y2="162" stroke="#c0392b" stroke-width="4"/>
+      <rect x="178" y="168" width="44" height="32" fill="#BA7517" rx="4"/>
+      <line x1="178" y1="178" x2="148" y2="155" stroke="#e8b89a" stroke-width="9" stroke-linecap="round"/>
+      <line x1="222" y1="178" x2="252" y2="155" stroke="#e8b89a" stroke-width="9" stroke-linecap="round"/>
+      <line x1="190" y1="200" x2="175" y2="225" stroke="#1a1a2e" stroke-width="10" stroke-linecap="round"/>
+      <line x1="210" y1="200" x2="225" y2="225" stroke="#1a1a2e" stroke-width="10" stroke-linecap="round"/>
+      <ellipse cx="200" cy="148" rx="26" ry="28" fill="#e8b89a"/>
+      <ellipse cx="200" cy="126" rx="28" ry="17" fill="#1a1a1a"/>
+      <rect x="174" y="126" width="8" height="30" fill="#1a1a1a" rx="4"/>
+      <rect x="193" y="117" width="16" height="9" fill="#BA7517" rx="3"/>
+      <path d="M 190 148 Q 197 142 204 148" stroke="#111" stroke-width="2.5" fill="none"/>
+      <path d="M 196 148 Q 203 142 210 148" stroke="#111" stroke-width="2.5" fill="none"/>
+      <path d="M 191 158 Q 200 165 209 158" stroke="#c0392b" stroke-width="2.5" fill="#FF9999"/>
+      <rect x="245" y="148" width="10" height="20" fill="#F5C4B3" rx="3"/>
+      <ellipse cx="250" cy="146" rx="10" ry="10" fill="#ED93B1"/>
+      <ellipse cx="250" cy="141" rx="8" ry="7" fill="#fff"/>
+    </svg>
+    <div class="bub" style="top:8px;left:50%;transform:translateX(-50%);">
+      <div class="bi gold" style="font-size:0.78rem;white-space:nowrap;">JA! Keine Schule! Keine Hausaufgaben! ICH BIN FREI!</div>
+    </div>
+    <div class="cap" style="background:#2d6a2d;color:#c8f0c8;border-top-color:#5cb85c;">Am Anfang ist alles super! Emma ist gl&#252;cklich!</div>
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="cell" style="min-height:240px;background:#c8d8e8;">
+    <div class="pnum">4</div>
+    <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="240" fill="#c8d8e8"/>
+      <rect x="0" y="168" width="320" height="72" fill="#aaa"/>
+      <rect x="0" y="165" width="320" height="5" fill="#888"/>
+      <rect x="20" y="80" width="70" height="87" fill="#f5e6c8" stroke="#ccc" stroke-width="1"/>
+      <polygon points="10,80 100,80 55,40" fill="#c0392b" opacity=".6"/>
+      <rect x="45" y="124" width="20" height="43" fill="#8B6FBA" opacity=".5"/>
+      <rect x="220" y="90" width="70" height="77" fill="#f5e6c8" stroke="#ccc" stroke-width="1"/>
+      <polygon points="210,90 300,90 255,55" fill="#2980b9" opacity=".5"/>
+      <rect x="245" y="134" width="18" height="33" fill="#8B6FBA" opacity=".5"/>
+      <rect x="30" y="100" width="25" height="16" fill="#FF6B6B" rx="2"/>
+      <text x="42" y="111" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#fff" font-weight="bold">LEER</text>
+      <rect x="230" y="108" width="25" height="16" fill="#FF6B6B" rx="2"/>
+      <text x="242" y="119" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#fff" font-weight="bold">LEER</text>
+      <circle cx="160" cy="158" r="18" fill="none" stroke="#8B6914" stroke-width="2" opacity=".5" stroke-dasharray="4,3"/>
+      <ellipse cx="160" cy="128" rx="24" ry="26" fill="#e8b89a"/>
+      <ellipse cx="160" cy="107" rx="26" ry="16" fill="#1a1a1a"/>
+      <rect x="136" y="107" width="8" height="28" fill="#1a1a1a" rx="4"/>
+      <rect x="153" y="98" width="15" height="8" fill="#BA7517" rx="3"/>
+      <ellipse cx="150" cy="129" rx="7" ry="7.5" fill="#fff"/>
+      <ellipse cx="170" cy="129" rx="7" ry="7.5" fill="#fff"/>
+      <circle cx="150" cy="131" r="4.5" fill="#2c2c8a"/>
+      <circle cx="170" cy="131" r="4.5" fill="#2c2c8a"/>
+      <circle cx="150" cy="131" r="2.5" fill="#111"/>
+      <circle cx="170" cy="131" r="2.5" fill="#111"/>
+      <ellipse cx="145" cy="140" rx="3" ry="5" fill="#4fc3f7" opacity=".8" transform="rotate(-10 145 140)"/>
+      <ellipse cx="175" cy="140" rx="3" ry="5" fill="#4fc3f7" opacity=".8" transform="rotate(10 175 140)"/>
+      <path d="M 152 140 Q 160 136 168 140" stroke="#c0392b" stroke-width="2" fill="none"/>
+      <rect x="140" y="153" width="40" height="28" fill="#BA7517" rx="4"/>
+    </svg>
+    <div class="bub" style="top:8px;right:8px;">
+      <div class="bi sad" style="max-width:135px;font-size:0.7rem;">Wo sind alle? Ich bin allein&#8230; Niemand ist hier!</div>
+      <div class="bt dr" style="border-top-color:#993C1D;"></div>
+    </div>
+    <div class="cap blue">Tag 2. Alle Menschen sind weg. Die Stadt ist leer.</div>
+  </div>
+
+  <div class="cell" style="min-height:240px;background:#2a2a2a;">
+    <div class="pnum">5</div>
+    <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="240" fill="#2a2a2a"/>
+      <rect x="0" y="0" width="320" height="120" fill="#1a1a1a"/>
+      <rect x="40" y="20" width="80" height="130" fill="#333" stroke="#555" stroke-width="2" rx="4"/>
+      <rect x="44" y="24" width="72" height="60" fill="#222" rx="2"/>
+      <rect x="44" y="88" width="72" height="58" fill="#222" rx="2"/>
+      <rect x="120" y="20" width="80" height="130" fill="#444" stroke="#555" stroke-width="1" rx="4" transform="rotate(-30 120 20)"/>
+      <line x1="48" y1="50" x2="112" y2="50" stroke="#333" stroke-width="1"/>
+      <line x1="48" y1="68" x2="112" y2="68" stroke="#333" stroke-width="1"/>
+      <text x="80" y="42" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#666">LEER</text>
+      <text x="80" y="62" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#666">LEER</text>
+      <text x="230" y="80" font-family="Bangers,sans-serif" font-size="40" fill="#FFD700" opacity=".3">&#9889;</text>
+      <line x1="215" y1="55" x2="265" y2="105" stroke="#c0392b" stroke-width="4" opacity=".7"/>
+      <rect x="240" y="150" width="10" height="30" fill="#f5e6c8" rx="2"/>
+      <ellipse cx="245" cy="148" rx="4" ry="6" fill="#FF8C00" opacity=".9"/>
+      <ellipse cx="245" cy="145" rx="2" ry="3" fill="#FFD700"/>
+      <ellipse cx="160" cy="168" rx="24" ry="26" fill="#e8b89a"/>
+      <ellipse cx="160" cy="147" rx="26" ry="16" fill="#1a1a1a"/>
+      <rect x="136" y="147" width="8" height="28" fill="#1a1a1a" rx="4"/>
+      <ellipse cx="150" cy="169" rx="7" ry="7.5" fill="#fff"/>
+      <ellipse cx="170" cy="169" rx="7" ry="7.5" fill="#fff"/>
+      <path d="M 144 167 Q 150 173 156 167" stroke="#111" stroke-width="2.5" fill="none"/>
+      <path d="M 164 167 Q 170 173 176 167" stroke="#111" stroke-width="2.5" fill="none"/>
+      <ellipse cx="147" cy="177" rx="3" ry="6" fill="#4fc3f7" opacity=".8"/>
+      <ellipse cx="173" cy="177" rx="3" ry="6" fill="#4fc3f7" opacity=".8"/>
+      <path d="M 152 180 Q 160 175 168 180" stroke="#c0392b" stroke-width="2" fill="none"/>
+      <rect x="140" y="193" width="40" height="30" fill="#555" rx="4"/>
+    </svg>
+    <div class="bub" style="top:10px;right:8px;">
+      <div class="bi sad" style="max-width:138px;font-size:0.7rem;">Kein Licht! Kein Essen! Kein Internet! Das ist schrecklich!!</div>
+      <div class="bt dr" style="border-top-color:#993C1D;"></div>
+    </div>
+    <div class="cap dark">Ohne Schule gibt es auch keinen Strom und kein Essen!</div>
+  </div>
+</div>
+
+<div class="grid g1">
+  <div class="cell" style="min-height:220px;background:#1a0a00;">
+    <div class="pnum">6</div>
+    <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+      <rect width="640" height="220" fill="#1a0a00"/>
+      <g opacity=".15">
+        <line x1="320" y1="110" x2="0" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="160" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="320" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="480" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="640" y2="0" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="640" y2="110" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="640" y2="220" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="0" y2="220" stroke="#FFD700" stroke-width="2"/>
+        <line x1="320" y1="110" x2="0" y2="110" stroke="#FFD700" stroke-width="2"/>
+      </g>
+      <line x1="500" y1="20" x2="420" y2="60" stroke="#FFD700" stroke-width="3" opacity=".8"/>
+      <circle cx="420" cy="60" r="7" fill="#FFD700" opacity=".9"/>
+      <ellipse cx="220" cy="140" rx="26" ry="28" fill="#e8b89a"/>
+      <ellipse cx="220" cy="118" rx="28" ry="17" fill="#1a1a1a"/>
+      <rect x="194" y="118" width="9" height="28" fill="#1a1a1a" rx="4"/>
+      <rect x="213" y="109" rx="3" width="16" height="9" fill="#BA7517"/>
+      <ellipse cx="209" cy="141" rx="8" ry="9" fill="#fff"/>
+      <ellipse cx="231" cy="141" rx="8" ry="9" fill="#fff"/>
+      <circle cx="210" cy="143" r="5.5" fill="#2c2c8a"/>
+      <circle cx="232" cy="143" r="5.5" fill="#2c2c8a"/>
+      <circle cx="210" cy="143" r="3" fill="#111"/>
+      <circle cx="232" cy="143" r="3" fill="#111"/>
+      <circle cx="212" cy="141" r="1.5" fill="#fff"/>
+      <circle cx="234" cy="141" r="1.5" fill="#fff"/>
+      <ellipse cx="202" cy="152" rx="4" ry="7" fill="#4fc3f7" opacity=".8"/>
+      <ellipse cx="238" cy="152" rx="4" ry="7" fill="#4fc3f7" opacity=".8"/>
+      <path d="M 210 154 Q 220 149 230 154" stroke="#c0392b" stroke-width="2" fill="none"/>
+      <rect x="200" y="167" width="40" height="30" fill="#BA7517" rx="4"/>
+      <line x1="200" y1="173" x2="170" y2="150" stroke="#e8b89a" stroke-width="9" stroke-linecap="round"/>
+      <line x1="240" y1="173" x2="270" y2="150" stroke="#e8b89a" stroke-width="9" stroke-linecap="round"/>
+      <ellipse cx="168" cy="148" rx="9" ry="7" fill="#e8b89a" stroke="#d4a070" stroke-width="1"/>
+      <ellipse cx="272" cy="148" rx="9" ry="7" fill="#e8b89a" stroke="#d4a070" stroke-width="1"/>
+      <polygon points="420,60 428,88 456,80 440,104 460,120 432,116 428,144 412,122 388,136 396,108 368,100 392,88" fill="#FFD700" opacity=".85"/>
+    </svg>
+    <div class="bub" style="top:8px;left:50%;transform:translateX(-50%);">
+      <div class="bi shout" style="max-width:270px;font-size:0.78rem;">BITTE! Neuer Wunsch!! Ich will zur&#252;ck! Ich will meine Familie! Ich will die Schule!!!</div>
+    </div>
+    <div class="sfx" style="right:25px;bottom:40px;font-size:1.3rem;color:#FFD700;transform:rotate(10deg);">BITTE!!</div>
+    <div class="cap dark">Emma weint und bittet um einen neuen Wunsch!</div>
+  </div>
+</div>
+
+<div class="grid g2">
+  <div class="cell" style="min-height:240px;background:#fff8f0;">
+    <div class="pnum">7</div>
+    <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="240" fill="#fff8f0"/>
+      <rect width="320" height="80" fill="#fef0e6"/>
+      <rect x="0" y="158" width="320" height="82" fill="#f5e6d0"/>
+      <line x1="0" y1="158" x2="320" y2="158" stroke="#e0c8a0" stroke-width="2"/>
+      <rect x="220" y="10" width="70" height="55" fill="#c8e6ff" stroke="#d4a574" stroke-width="2" rx="3"/>
+      <line x1="255" y1="10" x2="255" y2="65" stroke="#d4a574" stroke-width="1"/>
+      <line x1="220" y1="37" x2="290" y2="37" stroke="#d4a574" stroke-width="1"/>
+      <circle cx="268" cy="24" r="12" fill="#FFD700" opacity=".8"/>
+      <ellipse cx="82" cy="115" rx="22" ry="23" fill="#f5c8a0"/>
+      <ellipse cx="82" cy="96" rx="24" ry="15" fill="#8B4513"/>
+      <rect x="62" y="96" width="8" height="25" fill="#8B4513" rx="4"/>
+      <path d="M 74 115 Q 82 110 90 115" stroke="#111" stroke-width="2" fill="none"/>
+      <path d="M 75 124 Q 82 130 89 124" stroke="#c0392b" stroke-width="2" fill="#FF9999"/>
+      <rect x="64" y="137" width="36" height="30" fill="#E74C3C" rx="4"/>
+      <ellipse cx="238" cy="115" rx="22" ry="23" fill="#f0c090"/>
+      <ellipse cx="238" cy="97" rx="24" ry="14" fill="#333"/>
+      <path d="M 230 115 Q 238 110 246 115" stroke="#111" stroke-width="2" fill="none"/>
+      <path d="M 231 124 Q 238 130 245 124" stroke="#c0392b" stroke-width="2" fill="#FF9999"/>
+      <rect x="218" y="137" width="40" height="30" fill="#2980b9" rx="4"/>
+      <ellipse cx="160" cy="115" rx="25" ry="27" fill="#e8b89a"/>
+      <ellipse cx="160" cy="95" rx="27" ry="16" fill="#1a1a1a"/>
+      <rect x="135" y="95" width="8" height="27" fill="#1a1a1a" rx="4"/>
+      <rect x="153" y="86" width="15" height="9" fill="#BA7517" rx="3"/>
+      <path d="M 150 115 Q 158 109 166 115" stroke="#111" stroke-width="2.5" fill="none"/>
+      <path d="M 151 125 Q 160 132 169 125" stroke="#c0392b" stroke-width="2.5" fill="#FF9999"/>
+      <ellipse cx="153" cy="124" rx="3" ry="5" fill="#4fc3f7" opacity=".6"/>
+      <ellipse cx="167" cy="124" rx="3" ry="5" fill="#4fc3f7" opacity=".6"/>
+      <rect x="138" y="141" width="44" height="30" fill="#BA7517" rx="4"/>
+      <line x1="82" y1="140" x2="140" y2="147" stroke="#f5c8a0" stroke-width="10" stroke-linecap="round"/>
+      <line x1="238" y1="140" x2="180" y2="147" stroke="#f0c090" stroke-width="10" stroke-linecap="round"/>
+      <text x="160" y="68" text-anchor="middle" font-family="serif" font-size="22" fill="#E74C3C">&#10084;</text>
+      <text x="118" y="78" font-family="serif" font-size="14" fill="#E74C3C">&#10084;</text>
+      <text x="196" y="78" font-family="serif" font-size="14" fill="#ED93B1">&#10084;</text>
+    </svg>
+    <div class="bub" style="bottom:30px;left:50%;transform:translateX(-50%);">
+      <div class="bi happy" style="max-width:200px;font-size:0.7rem;">Mama! Papa! Ich liebe euch! Ich habe euch so vermisst!</div>
+      <div class="bt dl-h" style="border-top-color:#1D9E75;margin:0 auto;"></div>
+    </div>
+    <div class="cap green">Emma ist zur&#252;ck! Sie umarmt ihre Familie!</div>
+  </div>
+
+  <div class="cell" style="min-height:240px;background:#f0f8ff;">
+    <div class="pnum">8</div>
+    <svg viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+      <rect width="320" height="240" fill="#f0f8ff"/>
+      <rect width="320" height="90" fill="#e3f0ff"/>
+      <rect x="0" y="158" width="320" height="82" fill="#e8f4ff"/>
+      <line x1="0" y1="158" x2="320" y2="158" stroke="#c0d8f0" stroke-width="2"/>
+      <rect x="228" y="10" width="62" height="80" fill="#d4a574" stroke="#a07840" stroke-width="2" rx="3"/>
+      <text x="259" y="48" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#8B6914" font-weight="bold">DEUTSCH</text>
+      <text x="259" y="60" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#8B6914" font-weight="bold">Frau Schmid</text>
+      <circle cx="232" cy="50" r="4" fill="#FFD700"/>
+      <ellipse cx="205" cy="115" rx="22" ry="23" fill="#f5d5b0"/>
+      <circle cx="205" cy="89" rx="12" ry="12" fill="#5a3a1a"/>
+      <ellipse cx="205" cy="99" rx="24" ry="14" fill="#5a3a1a"/>
+      <rect x="188" y="111" width="10" height="8" fill="none" stroke="#333" stroke-width="1.5" rx="3"/>
+      <rect x="202" y="111" width="10" height="8" fill="none" stroke="#333" stroke-width="1.5" rx="3"/>
+      <line x1="198" y1="115" x2="202" y2="115" stroke="#333" stroke-width="1"/>
+      <ellipse cx="193" cy="115" rx="3.5" ry="4" fill="#fff"/>
+      <ellipse cx="207" cy="115" rx="3.5" ry="4" fill="#fff"/>
+      <circle cx="193" cy="115" r="2.5" fill="#5a3a1a"/>
+      <circle cx="207" cy="115" r="2.5" fill="#5a3a1a"/>
+      <path d="M 193 125 Q 200 131 207 125" stroke="#c0392b" stroke-width="2" fill="#FFB6C1"/>
+      <ellipse cx="187" cy="122" rx="6" ry="4" fill="#ED93B1" opacity=".4"/>
+      <ellipse cx="213" cy="122" rx="6" ry="4" fill="#ED93B1" opacity=".4"/>
+      <rect x="183" y="137" width="44" height="35" fill="#534AB7" rx="4"/>
+      <rect x="222" y="145" width="20" height="26" fill="#7F77DD" rx="2"/>
+      <text x="232" y="161" text-anchor="middle" font-family="sans-serif" font-size="6" fill="#fff" font-weight="bold">DEUTSCH</text>
+      <ellipse cx="78" cy="120" rx="20" ry="21" fill="#e8b89a"/>
+      <ellipse cx="78" cy="104" rx="22" ry="13" fill="#1a1a1a"/>
+      <rect x="58" y="104" width="7" height="22" fill="#1a1a1a" rx="3"/>
+      <rect x="72" y="96" width="13" height="7" fill="#BA7517" rx="2"/>
+      <path d="M 70 120 Q 78 115 86 120" stroke="#111" stroke-width="2" fill="none"/>
+      <path d="M 71 128 Q 78 134 85 128" stroke="#c0392b" stroke-width="2" fill="#FF9999"/>
+      <rect x="62" y="140" width="32" height="25" fill="#BA7517" rx="3"/>
+      <line x1="66" y1="164" x2="54" y2="185" stroke="#1a1a2e" stroke-width="8" stroke-linecap="round"/>
+      <line x1="82" y1="164" x2="90" y2="183" stroke="#1a1a2e" stroke-width="8" stroke-linecap="round"/>
+      <g opacity=".25">
+        <line x1="0" y1="122" x2="55" y2="132" stroke="#BA7517" stroke-width="1.5"/>
+        <line x1="0" y1="138" x2="55" y2="144" stroke="#BA7517" stroke-width="1.5"/>
+      </g>
+      <text x="135" y="105" font-family="serif" font-size="26" fill="#534AB7">&#10084;</text>
+      <text x="112" y="86" font-family="serif" font-size="14" fill="#BA7517">&#10084;</text>
+    </svg>
+    <div class="bub" style="bottom:30px;left:8px;">
+      <div class="bi" style="max-width:170px;font-size:0.68rem;background:#EEEDFE;border-color:#534AB7;color:#26215C;">Frau Schmid!! Ich liebe Ihren Unterricht! Sie sind die beste Lehrerin der Welt!</div>
+      <div class="bt dl" style="border-top-color:#534AB7;"></div>
+    </div>
+    <div class="cap blue">Emma l&#228;uft sofort zu Frau Schmid!</div>
+  </div>
+</div>
+
+<div class="grid g1">
+  <div class="cell" style="min-height:210px;background:#fff9f0;">
+    <div class="pnum">9</div>
+    <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg">
+      <rect width="640" height="210" fill="#fff9f0"/>
+      <rect width="640" height="80" fill="#FFE0B2"/>
+      <circle cx="320" cy="30" r="34" fill="#FFD700" opacity=".75"/>
+      <rect x="240" y="30" width="160" height="80" fill="#f5e6c8" stroke="#d4a574" stroke-width="2"/>
+      <polygon points="230,30 410,30 325,0 315,0" fill="#c0392b" opacity=".7"/>
+      <rect x="298" y="70" width="24" height="40" fill="#8B6FBA" opacity=".8"/>
+      <rect x="254" y="45" width="28" height="22" fill="#c8e6ff" stroke="#a07840" stroke-width="1" rx="2"/>
+      <rect x="358" y="45" width="28" height="22" fill="#c8e6ff" stroke="#a07840" stroke-width="1" rx="2"/>
+      <rect x="258" y="10" width="124" height="18" fill="#fff" stroke="#d4a574" stroke-width="1" rx="3"/>
+      <text x="320" y="22" text-anchor="middle" font-family="Bangers,sans-serif" font-size="11" fill="#BA7517" letter-spacing="1">DIE BESTE SCHULE!</text>
+      <rect x="0" y="158" width="640" height="52" fill="#7ec850"/>
+      <line x1="0" y1="158" x2="640" y2="158" stroke="#5a9a30" stroke-width="2"/>
+      <circle cx="50" cy="158" r="7" fill="#FFD700"/>
+      <circle cx="100" cy="158" r="5" fill="#ED93B1"/>
+      <circle cx="530" cy="158" r="7" fill="#FFD700"/>
+      <circle cx="590" cy="158" r="5" fill="#ED93B1"/>
+      <ellipse cx="320" cy="128" rx="27" ry="29" fill="#e8b89a"/>
+      <ellipse cx="320" cy="106" rx="29" ry="18" fill="#1a1a1a"/>
+      <rect x="293" y="106" width="9" height="30" fill="#1a1a1a" rx="5"/>
+      <rect x="312" y="97" width="16" height="9" fill="#BA7517" rx="3"/>
+      <path d="M 308 128 Q 316 122 324 128" stroke="#111" stroke-width="3" fill="none"/>
+      <path d="M 312 128 Q 320 122 328 128" stroke="#111" stroke-width="3" fill="none"/>
+      <path d="M 308 140 Q 320 148 332 140" stroke="#c0392b" stroke-width="3" fill="#FF9999"/>
+      <rect x="294" y="156" width="52" height="36" fill="#BA7517" rx="5"/>
+      <line x1="294" y1="165" x2="252" y2="145" stroke="#e8b89a" stroke-width="10" stroke-linecap="round"/>
+      <line x1="346" y1="165" x2="388" y2="145" stroke="#e8b89a" stroke-width="10" stroke-linecap="round"/>
+      <text x="210" y="98" font-family="serif" font-size="22" fill="#E74C3C">&#10084;</text>
+      <text x="400" y="98" font-family="serif" font-size="22" fill="#ED93B1">&#10084;</text>
+      <text x="160" y="118" font-family="serif" font-size="14" fill="#BA7517">&#10084;</text>
+      <text x="456" y="118" font-family="serif" font-size="14" fill="#BA7517">&#10084;</text>
+      <text x="320" y="76" text-anchor="middle" font-family="serif" font-size="26" fill="#FFD700">&#10084;</text>
+    </svg>
+    <div class="bub" style="top:8px;left:50%;transform:translateX(-50%);">
+      <div class="bi happy" style="max-width:310px;font-size:0.75rem;border-width:3px;">Die Schule ohne Menschen ist ein Albtraum! Sogar Deutsch mit Frau Schmid ist tausendmal besser als allein zu sein!</div>
+      <div class="bt dl-h" style="border-top-color:#1D9E75;margin:0 auto;"></div>
+    </div>
+    <div class="cap green">Emma liebt jetzt die Schule. Das echte Leben ist wunderbar!</div>
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:1rem;">
+  <button class="actbtn" onclick="tab('quiz')">Quiz machen &#9999;&#65039;</button>
+  <button class="actbtn green" onclick="tab('vocab')">Vokabeln lernen &#128218;</button>
+</div>
+</div>
+
+<!-- ===== VOCAB — CORRIGE ===== -->
+<div id="tab-vocab" class="panel">
+<div class="vc">
+  <div class="vt">Vokabeln aus der Geschichte</div>
+  <div class="vg">
+    <div class="vi"><span class="vde">sich w&#252;nschen</span><span class="vfr">faire un v&#339;u</span></div>
+    <div class="vi"><span class="vde">die Sternschnuppe</span><span class="vfr">l&#8217;&#233;toile filante</span></div>
+    <div class="vi"><span class="vde">der Traum</span><span class="vfr">le r&#234;ve</span></div>
+    <div class="vi"><span class="vde">wahr werden</span><span class="vfr">se r&#233;aliser</span></div>
+    <div class="vi"><span class="vde">am Anfang</span><span class="vfr">au d&#233;but</span></div>
+    <div class="vi"><span class="vde">allein</span><span class="vfr">seul&#183;e</span></div>
+    <div class="vi"><span class="vde">niemand</span><span class="vfr">personne</span></div>
+    <div class="vi"><span class="vde">leer</span><span class="vfr">vide</span></div>
+    <div class="vi"><span class="vde">schrecklich</span><span class="vfr">horrible</span></div>
+    <div class="vi"><span class="vde">der Albtraum</span><span class="vfr">le cauchemar</span></div>
+    <div class="vi"><span class="vde">weinen</span><span class="vfr">pleurer</span></div>
+    <div class="vi"><span class="vde">bitten</span><span class="vfr">supplier</span></div>
+    <div class="vi"><span class="vde">zur&#252;ck</span><span class="vfr">de retour</span></div>
+    <div class="vi"><span class="vde">vermissen</span><span class="vfr">manquer (&#224; qqn)</span></div>
+    <div class="vi"><span class="vde">sogar</span><span class="vfr">m&#234;me</span></div>
+    <div class="vi"><span class="vde">tausendmal besser</span><span class="vfr">mille fois mieux</span></div>
+    <div class="vi"><span class="vde">wunderbar</span><span class="vfr">merveilleux</span></div>
+    <div class="vi"><span class="vde">die beste Lehrerin</span><span class="vfr">la meilleure prof</span></div>
+  </div>
+</div>
+<div style="text-align:center;margin-top:0.8rem;">
+  <button class="actbtn" onclick="tab('quiz')">Quiz starten &#9999;&#65039;</button>
+</div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="tab-quiz" class="panel">
+<div style="background:#111;border:1.5px solid #BA7517;border-radius:10px;padding:0.9rem;margin-bottom:1rem;font-size:0.85rem;color:#FAC775;font-weight:700;">Lies die BD nochmal und beantworte die Fragen!</div>
+<div id="sdisplay" class="scorebox"><div class="scorenum" id="snum">0/0</div><div style="font-size:0.8rem;color:#888;margin-top:2px;">richtige Antworten</div></div>
+
+<div id="q1" class="qcard">
+  <div class="qtxt"><span class="qn">1</span>Was w&#252;nscht sich Emma?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,1,false)">A) Sie w&#252;nscht sich ein Haustier.</button>
+    <button class="opt" onclick="ans(this,1,true)">B) Sie w&#252;nscht sich keine Schule mehr.</button>
+    <button class="opt" onclick="ans(this,1,false)">C) Sie w&#252;nscht sich Ferien in der Sonne.</button>
+  </div>
+  <div class="fb" id="fb1"></div>
+</div>
+
+<div id="q2" class="qcard">
+  <div class="qtxt"><span class="qn">2</span>Wie ist das Leben ohne Schule am Anfang?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,2,false)">A) Schrecklich und langweilig.</button>
+    <button class="opt" onclick="ans(this,2,true)">B) Super! Emma ist gl&#252;cklich und frei.</button>
+    <button class="opt" onclick="ans(this,2,false)">C) Genauso wie vorher.</button>
+  </div>
+  <div class="fb" id="fb2"></div>
+</div>
+
+<div id="q3" class="qcard">
+  <div class="qtxt"><span class="qn">3</span>Was ist das Problem in der Welt ohne Schule?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,3,false)">A) Es gibt keine Videospiele mehr.</button>
+    <button class="opt" onclick="ans(this,3,true)">B) Alle Menschen sind weg. Es gibt kein Essen und kein Licht.</button>
+    <button class="opt" onclick="ans(this,3,false)">C) Es regnet die ganze Zeit.</button>
+  </div>
+  <div class="fb" id="fb3"></div>
+</div>
+
+<div id="q4" class="qcard">
+  <div class="qtxt"><span class="qn">4</span>Was macht Emma, um zur&#252;ckzukommen?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,4,false)">A) Sie l&#228;uft sehr schnell.</button>
+    <button class="opt" onclick="ans(this,4,false)">B) Sie wartet ruhig.</button>
+    <button class="opt" onclick="ans(this,4,true)">C) Sie bittet um einen neuen Wunsch bei einer Sternschnuppe.</button>
+  </div>
+  <div class="fb" id="fb4"></div>
+</div>
+
+<div id="q5" class="qcard">
+  <div class="qtxt"><span class="qn">5</span>Was sagt Emma &#252;ber Frau Schmid am Ende?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,5,false)">A) Deutsch ist immer noch langweilig.</button>
+    <button class="opt" onclick="ans(this,5,true)">B) Deutsch mit Frau Schmid ist tausendmal besser als allein zu sein!</button>
+    <button class="opt" onclick="ans(this,5,false)">C) Sie will nie mehr in die Schule gehen.</button>
+  </div>
+  <div class="fb" id="fb5"></div>
+</div>
+
+<div id="q6" class="qcard">
+  <div class="qtxt"><span class="qn">6</span>Was bedeutet &#8222;der Albtraum&#8221;?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,6,false)">A) le r&#234;ve</button>
+    <button class="opt" onclick="ans(this,6,true)">B) le cauchemar</button>
+    <button class="opt" onclick="ans(this,6,false)">C) le souhait</button>
+  </div>
+  <div class="fb" id="fb6"></div>
+</div>
+
+<div id="q7" class="qcard">
+  <div class="qtxt"><span class="qn">7</span>Was bedeutet &#8222;niemand&#8221;?</div>
+  <div class="opts">
+    <button class="opt" onclick="ans(this,7,false)">A) tout le monde</button>
+    <button class="opt" onclick="ans(this,7,false)">B) quelqu&#8217;un</button>
+    <button class="opt" onclick="ans(this,7,true)">C) personne</button>
+  </div>
+  <div class="fb" id="fb7"></div>
+</div>
+
+<div style="background:#412402;border-radius:8px;padding:6px 12px;margin-bottom:0.7rem;font-family:'Bangers',cursive;font-size:1rem;color:#FAC775;letter-spacing:1px;">&#9999;&#65039; Freie Antworten</div>
+
+<div class="openq">
+  <div class="qtxt"><span class="qn green">8</span>Was w&#252;nschst du dir? Schreib einen Satz!</div>
+  <div style="margin-top:5px;"><span class="hint">Ich w&#252;nsche mir&#8230;</span><span class="hint">Ich m&#246;chte&#8230;</span></div>
+  <textarea placeholder="Ich w&#252;nsche mir &#8230;"></textarea>
+</div>
+
+<div class="openq">
+  <div class="qtxt"><span class="qn green">9</span>Findest du die Schule wichtig? Warum? Schreib zwei S&#228;tze!</div>
+  <div style="margin-top:5px;"><span class="hint">Ja, die Schule ist wichtig, weil&#8230;</span><span class="hint">Ohne Schule gibt es&#8230;</span></div>
+  <textarea placeholder="Ja / Nein, die Schule ist &#8230; weil &#8230;"></textarea>
+</div>
+
+<div style="margin-top:0.8rem;">
+  <button class="actbtn" onclick="showScore()">Ergebnisse zeigen &#127919;</button>
+  <button class="resetbtn" onclick="resetQ()">Neustart</button>
+</div>
+</div>
+
+<script>
+let done={},correct=0,total=7;
+function tab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.add('on');
+  const idx={bd:0,vocab:1,quiz:2}[n];
+  document.querySelectorAll('.tab')[idx].classList.add('on');
+}
+function ans(btn,q,ok){
+  if(done[q])return;
+  done[q]=true;
+  const card=document.getElementById('q'+q);
+  const fb=document.getElementById('fb'+q);
+  card.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  if(ok){btn.classList.add('right');fb.textContent='Richtig! Sehr gut!';fb.className='fb ok';card.classList.add('ok');correct++;}
+  else{btn.classList.add('wrong');card.classList.add('ko');card.querySelectorAll('.opt').forEach(b=>{if(b.onclick.toString().includes('true'))b.classList.add('showok');});fb.textContent=['Nicht ganz... Lies nochmal!','Fast! Schau die BD nochmal an.','Noch einmal versuchen!'][Math.floor(Math.random()*3)];fb.className='fb ko';}
+  const d=Object.keys(done).length;
+  document.getElementById('snum').textContent=correct+'/'+d;
+  document.getElementById('sdisplay').classList.add('on');
+}
+function showScore(){
+  const d=Object.keys(done).length;
+  let s=correct+'/'+total;
+  if(d<total)s+=' (noch '+(total-d)+' Fragen offen!)';
+  else s+=correct>=6?' Ausgezeichnet!':correct>=4?' Gut gemacht!':' Weiter &#252;ben!';
+  document.getElementById('snum').textContent=s;
+  document.getElementById('sdisplay').classList.add('on');
+  document.getElementById('sdisplay').scrollIntoView({behavior:'smooth',block:'center'});
+}
+function resetQ(){
+  done={};correct=0;
+  document.getElementById('sdisplay').classList.remove('on');
+  for(let i=1;i<=7;i++){const c=document.getElementById('q'+i);if(!c)continue;c.classList.remove('ok','ko');document.getElementById('fb'+i).className='fb';c.querySelectorAll('.opt').forEach(b=>{b.disabled=false;b.className='opt';});}
+  document.querySelectorAll('textarea').forEach(t=>t.value='');
+}
+</script>
